@@ -1,6 +1,16 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export default async function handler(req, res) {
+  // Handle CORS Preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Handle accidental browser GET requests
+  if (req.method === 'GET') {
+    return res.status(200).json({ message: 'The Krishi Setu Voice API is running! Please send a POST request with the voice transcript.' });
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
