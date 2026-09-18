@@ -47,6 +47,7 @@ ${JSON.stringify(context)}
     return res.status(200).json({ reply: text });
   } catch (error) {
     console.error('Gemini API Error:', error);
-    return res.status(500).json({ error: 'Failed to generate response' });
+    // Return the specific error from Google so the frontend can see why it failed
+    return res.status(500).json({ error: 'Failed to generate response', details: error.message || String(error) });
   }
 }
