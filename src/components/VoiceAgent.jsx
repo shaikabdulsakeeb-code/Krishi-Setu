@@ -11,6 +11,12 @@ export default function VoiceAgent() {
   const recognitionRef = useRef(null);
   
   useEffect(() => {
+    // Force voice loading early for TTS
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+      window.speechSynthesis.getVoices();
+    }
+
     // Initialize Speech Recognition
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -49,9 +55,10 @@ export default function VoiceAgent() {
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
-      // Try to find a Telugu voice if available, otherwise use default
-      const voices = window.speechSynthesis.getVoices();
-      const teluguVoice = voices.find(v => v.lang.includes('te') || v.lang.includes('te-IN'));
+      // Try to find a Telugu voice if available
+      let voices = window.speechSynthesis.getVoices();
+      let teluguVoice = voices.find(v => v.lang.includes('te') || v.lang.includes('te-IN'));
+      
       if (teluguVoice) {
         utterance.voice = teluguVoice;
       }
@@ -96,6 +103,11 @@ export default function VoiceAgent() {
     if (isListening) {
       recognitionRef.current?.stop();
     } else {
+      // Initialize TTS engine on user click to bypass strict mobile browser auto-play restrictions
+      if ('speechSynthesis' in window) {
+         window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+      }
+      
       // Ensure voices are loaded
       window.speechSynthesis.getVoices();
       recognitionRef.current?.start();
