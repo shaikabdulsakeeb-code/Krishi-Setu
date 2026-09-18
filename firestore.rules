@@ -1,0 +1,33 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    // Users can only read/write their own profile
+    match /users/{uid} {
+      allow read: if true; // others need to see profiles for deals
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    
+    // Crops can be read by anyone, but only written by the farmer who owns them
+    match /crops/{cropId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.farmerId == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.farmerId == request.auth.uid;
+    }
+    
+    // BuyerRequests can be read by anyone, but only written by the buyer who owns them
+    match /buyerRequests/{requestId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.buyerId == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.buyerId == request.auth.uid;
+    }
+    
+    // Deals can only be read/written by the two parties involved
+    match /deals/{dealId} {
+      allow create: if request.auth != null && (request.resource.data.buyerId == request.auth.uid || request.resource.data.farmerId == request.auth.uid);
+      allow read, update: if request.auth != null && (resource.data.buyerId == request.auth.uid || resource.data.farmerId == request.auth.uid);
+      allow delete: if false; // deals shouldn't be deleted, only cancelled
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    "users": {
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "crops": {
+      "$cropId": {
+        ".write": "auth != null && ((!data.exists() && newData.child('farmerId').val() === auth.uid) || (data.exists() && data.child('farmerId').val() === auth.uid))"
+      }
+    },
+    "buyerRequests": {
+      "$requestId": {
+        ".write": "auth != null && ((!data.exists() && newData.child('buyerId').val() === auth.uid) || (data.exists() && data.child('buyerId').val() === auth.uid))"
+      }
+    },
+    "deals": {
+      "$dealId": {
+        ".write": "auth != null && ((!data.exists() && (newData.child('buyerId').val() === auth.uid || newData.child('farmerId').val() === auth.uid)) || (data.exists() && newData.exists() && (data.child('buyerId').val() === auth.uid || data.child('farmerId').val() === auth.uid)))"
+      }
+    }
+  }
+}
