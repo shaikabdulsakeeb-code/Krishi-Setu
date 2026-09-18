@@ -1,0 +1,312 @@
+[
+  {
+    "crop": "Brinjal",
+    "telugu_name": "వంకాయ",
+    "hindi_name": "बैंगन",
+    "modal_price_rs_per_kg": 19.94,
+    "price_basis": "India median",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Lemon",
+    "telugu_name": "నిమ్మకాయ",
+    "hindi_name": "नींबू",
+    "modal_price_rs_per_kg": 93.54,
+    "price_basis": "India median",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Green Chilli",
+    "telugu_name": "పచ్చిమిర్చి",
+    "hindi_name": "हरी मिर्च",
+    "modal_price_rs_per_kg": 34.57,
+    "price_basis": "India median",
+    "price_date": 46282,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Tomato",
+    "telugu_name": "టమాటా",
+    "hindi_name": "टमाटर",
+    "modal_price_rs_per_kg": 12,
+    "price_basis": "Bengaluru, Karnataka modal",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Onion",
+    "telugu_name": "ఉల్లిపాయ",
+    "hindi_name": "प्याज",
+    "modal_price_rs_per_kg": 16,
+    "price_basis": "Lasalgaon, Maharashtra modal",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Potato",
+    "telugu_name": "బంగాళాదుంప",
+    "hindi_name": "आलू",
+    "modal_price_rs_per_kg": 11,
+    "price_basis": "Agra, Uttar Pradesh modal",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Wheat",
+    "telugu_name": "గోధుమ",
+    "hindi_name": "गेहूं",
+    "modal_price_rs_per_kg": 21,
+    "price_basis": "Karnal, Haryana modal",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Paddy",
+    "telugu_name": "వరి ధాన్యం",
+    "hindi_name": "धान",
+    "modal_price_rs_per_kg": 24.66,
+    "price_basis": "Andhra Pradesh average",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Maize",
+    "telugu_name": "మొక్కజొన్న",
+    "hindi_name": "मक्का",
+    "modal_price_rs_per_kg": 24.65,
+    "price_basis": "Andhra Pradesh average",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Groundnut",
+    "telugu_name": "వేరుశెనగ",
+    "hindi_name": "मूंगफली",
+    "modal_price_rs_per_kg": 75.17,
+    "price_basis": "Kurnool, Andhra Pradesh",
+    "price_date": 46282,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Cotton",
+    "telugu_name": "పత్తి",
+    "hindi_name": "कपास",
+    "modal_price_rs_per_kg": 80.07,
+    "price_basis": "Andhra Pradesh average",
+    "price_date": 46282,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Papaya",
+    "telugu_name": "బొప్పాయి",
+    "hindi_name": "पपीता",
+    "modal_price_rs_per_kg": 29.95,
+    "price_basis": "India median",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Sweet Potato",
+    "telugu_name": "చిలగడదుంప",
+    "hindi_name": "शकरकंद",
+    "modal_price_rs_per_kg": 41,
+    "price_basis": "India median",
+    "price_date": 46283,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Grapes",
+    "telugu_name": "ద్రాక్ష",
+    "hindi_name": "अंगूर",
+    "modal_price_rs_per_kg": 42,
+    "price_basis": "Punjab reported market",
+    "price_date": 46281,
+    "price_status": "Current indicative wholesale price; verify state/APMC before trading",
+    "unit": "INR/kg"
+  },
+  {
+    "crop": "Apple",
+    "telugu_name": "ఆపిల్",
+    "hindi_name": "सेब",
+    "modal_price_rs_per_kg": 102.7,
+    "price_basis": "Delhi reported wholesale",
+    "price_date": 46282,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Banana",
+    "telugu_name": "అరటిపండు",
+    "hindi_name": "केला",
+    "modal_price_rs_per_kg": 50,
+    "price_basis": "Mapusa, Goa",
+    "price_date": 46282,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Green Banana",
+    "telugu_name": "పచ్చి అరటి",
+    "hindi_name": "कच्चा केला",
+    "modal_price_rs_per_kg": 15.5,
+    "price_basis": "Uttar Pradesh average",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Pomegranate",
+    "telugu_name": "దానిమ్మ",
+    "hindi_name": "अनार",
+    "modal_price_rs_per_kg": 100.33,
+    "price_basis": "Maharashtra average",
+    "price_date": 46282,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Pumpkin",
+    "telugu_name": "గుమ్మడికాయ",
+    "hindi_name": "कद्दू",
+    "modal_price_rs_per_kg": 15,
+    "price_basis": "India median",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Garlic",
+    "telugu_name": "వెల్లుల్లి",
+    "hindi_name": "लहसुन",
+    "modal_price_rs_per_kg": 121.95,
+    "price_basis": "India median",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Safflower",
+    "telugu_name": "కుసుమలు",
+    "hindi_name": "कुसुम",
+    "modal_price_rs_per_kg": 49.14,
+    "price_basis": "Hubballi, Karnataka",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Copra",
+    "telugu_name": "ఎండుకొబ్బరి",
+    "hindi_name": "खोपरा",
+    "modal_price_rs_per_kg": 176,
+    "price_basis": "Kerala average",
+    "price_date": 46282,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Jute",
+    "telugu_name": "జనపనార",
+    "hindi_name": "जूट",
+    "modal_price_rs_per_kg": 113,
+    "price_basis": "Limited India report",
+    "price_date": 46282,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Mahua Seed",
+    "telugu_name": "ఇప్ప విత్తనం",
+    "hindi_name": "महुआ बीज",
+    "modal_price_rs_per_kg": 25,
+    "price_basis": "India median",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Lime",
+    "telugu_name": "నిమ్మ",
+    "hindi_name": "नींबू",
+    "modal_price_rs_per_kg": 79.02,
+    "price_basis": "India average",
+    "price_date": 46282,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Sweet Lime",
+    "telugu_name": "బత్తాయి",
+    "hindi_name": "मौसंबी",
+    "modal_price_rs_per_kg": 31.67,
+    "price_basis": "Gujarat average",
+    "price_date": 46281,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Moong Dal",
+    "telugu_name": "పెసరపప్పు",
+    "hindi_name": "मूंग दाल",
+    "modal_price_rs_per_kg": 107.48,
+    "price_basis": "India average",
+    "price_date": 46282,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Goat",
+    "telugu_name": "మేక",
+    "hindi_name": "बकरी",
+    "modal_price_rs_per_kg": 6100,
+    "price_basis": "Tripura market",
+    "price_date": 46283,
+    "price_status": "INR/animal",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Tomato",
+    "telugu_name": "టమాటా",
+    "hindi_name": "टमाटर",
+    "modal_price_rs_per_kg": 31.84,
+    "price_basis": "Odisha median",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Tomato",
+    "telugu_name": "టమాటా",
+    "hindi_name": "टमाटर",
+    "modal_price_rs_per_kg": 14.45,
+    "price_basis": "Madhya Pradesh average",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  },
+  {
+    "crop": "Tomato",
+    "telugu_name": "టమాటా",
+    "hindi_name": "टमाटर",
+    "modal_price_rs_per_kg": 19,
+    "price_basis": "Uttar Pradesh average",
+    "price_date": 46283,
+    "price_status": "INR/kg",
+    "unit": "Current indicative wholesale price; verify state/APMC"
+  }
+]

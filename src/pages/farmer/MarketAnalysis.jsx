@@ -1,88 +1,166 @@
 import { useState, useMemo } from 'react';
-import { Search, TrendingUp, MapPin } from 'lucide-react';
-import marketData from '../../data/marketPrices.json';
+import { Search, TrendingUp, Info, BarChart3, Grip } from 'lucide-react';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
+} from 'recharts';
+import verifiedPrices from '../../data/verifiedPrices.json';
 
 export default function MarketAnalysis() {
-  const states = Object.keys(marketData).sort();
-  const [selectedState, setSelectedState] = useState(states.includes('Maharashtra') ? 'Maharashtra' : states[0]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState('chart'); // 'chart' or 'grid'
 
-  const stateData = marketData[selectedState] || {};
-  const allCommodities = Object.keys(stateData).sort();
+  // Sort by price descending for the chart/default view
+  const sortedData = useMemo(() => {
+    return [...verifiedPrices].sort((a, b) => b.modal_price_rs_per_kg - a.modal_price_rs_per_kg);
+  }, []);
 
-  const filteredCommodities = useMemo(() => {
-    if (!searchQuery) return allCommodities;
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return sortedData;
     const lowerQ = searchQuery.toLowerCase();
-    return allCommodities.filter(c => c.toLowerCase().includes(lowerQ));
-  }, [searchQuery, allCommodities]);
+    return sortedData.filter(item => 
+      item.crop.toLowerCase().includes(lowerQ) ||
+      (item.telugu_name && item.telugu_name.includes(lowerQ)) ||
+      (item.hindi_name && item.hindi_name.includes(lowerQ))
+    );
+  }, [searchQuery, sortedData]);
+
+  // Take top 15 for the chart if no search query, else show filtered
+  const chartData = searchQuery ? filteredData : sortedData.slice(0, 15);
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white border border-[#c0c9c1] p-3 rounded-lg shadow-xl animate-fade-in">
+          <p className="font-bold text-[#033621] text-lg capitalize">{data.crop}</p>
+          <div className="flex gap-2 text-sm text-gray-500 mb-2">
+            <span>{data.telugu_name}</span> &bull; <span>{data.hindi_name}</span>
+          </div>
+          <p className="font-bold text-[#3a674f]">₹{data.modal_price_rs_per_kg} / kg</p>
+          <p className="text-xs text-gray-400 mt-1">{data.price_status}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
-      <div>
-        <h2 className="text-headline-lg flex items-center gap-3">
-          <TrendingUp className="h-8 w-8 text-[#3a674f]" />
-          Market Analysis
-        </h2>
-        <p className="text-gray-600 mt-1">Check expected wholesale market prices per kg across different states.</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="animate-fade-in-up" style={{ animationDelay: '0ms' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-headline-lg flex items-center gap-3">
+              <TrendingUp className="h-8 w-8 text-[#3a674f]" />
+              Market Analysis
+            </h2>
+            <p className="text-gray-600 mt-1">Real-time indicative wholesale prices across India.</p>
+          </div>
+          
+          <div className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
+            <button 
+              onClick={() => setViewMode('chart')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'chart' ? 'bg-[#e4efe7] text-[#033621]' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              <BarChart3 className="w-4 h-4" /> Visual
+            </button>
+            <button 
+              onClick={() => setViewMode('grid')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'grid' ? 'bg-[#e4efe7] text-[#033621]' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              <Grip className="w-4 h-4" /> Grid
+            </button>
+          </div>
+        </div>
         
-        <div className="mt-4 p-4 bg-blue-50 text-blue-800 text-sm rounded-lg border border-blue-100 flex gap-3 items-start">
-          <span className="text-xl">ℹ️</span>
+        <div className="mt-4 p-4 bg-amber-50 text-amber-900 text-sm rounded-lg border border-amber-200 flex gap-3 items-start">
+          <Info className="h-5 w-5 flex-shrink-0 text-amber-600" />
           <p>
-            <strong>Disclaimer:</strong> The prices shown are average expected wholesale amounts based on aggregated market data. 
-            Actual local market prices may vary depending on crop quality, daily fluctuations, and specific district markets.
+            <strong>Verified India Median:</strong> The prices shown are current indicative wholesale values per kg. 
+            Prices are meant as a national benchmark; always verify with your local APMC or state market before confirming a deal.
           </p>
         </div>
       </div>
 
-      <div className="ledger-card p-6 flex flex-col md:flex-row gap-4 items-center">
-        <div className="w-full md:w-1/3">
-          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-            <MapPin className="h-4 w-4" /> Select State
-          </label>
-          <select 
-            className="form-input px-3 py-2 w-full"
-            value={selectedState}
-            onChange={(e) => setSelectedState(e.target.value)}
-          >
-            {states.map(state => (
-              <option key={state} value={state}>{state}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="w-full md:w-2/3">
-          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
-            <Search className="h-4 w-4" /> Search Crop
-          </label>
+      {/* Search */}
+      <div className="ledger-card p-4 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+        <div className="relative max-w-xl mx-auto">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
           <input 
             type="text" 
-            placeholder="E.g., Tomato, Apple, Onion..."
-            className="form-input px-3 py-2 w-full"
+            placeholder="Search crop in English, Telugu (టమాటా), or Hindi..."
+            className="form-input pl-10 pr-3 py-3 w-full border-gray-300 rounded-xl focus:ring-[#033621] focus:border-[#033621]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      <div>
-        {filteredCommodities.length === 0 ? (
+      {/* Main Content Area */}
+      <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+        {filteredData.length === 0 ? (
           <div className="ledger-card p-12 text-center text-gray-500">
-            No crops found matching "{searchQuery}" in {selectedState}.
+            No crops found matching "{searchQuery}".
+          </div>
+        ) : viewMode === 'chart' ? (
+          <div className="ledger-card p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">
+              {searchQuery ? 'Search Results Analysis' : 'Top 15 Most Valuable Crops (₹/kg)'}
+            </h3>
+            <div className="h-[400px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E7E1D2" />
+                  <XAxis 
+                    dataKey="crop" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6B6355', fontSize: 12 }}
+                    interval={0}
+                    angle={-45}
+                    textAnchor="end"
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6B6355', fontSize: 12 }}
+                    tickFormatter={(value) => `₹${value}`}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: '#F8F3E6' }} />
+                  <Bar dataKey="modal_price_rs_per_kg" radius={[4, 4, 0, 0]} animationDuration={1500}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#1F4D36' : '#a0d2b3'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredCommodities.map(commodity => (
+            {filteredData.map((item, index) => (
               <div 
-                key={commodity} 
-                className="ledger-card p-5 flex flex-col hover:-translate-y-1 hover:shadow-md transition-all duration-300"
+                key={item.crop} 
+                className="ledger-card p-5 flex flex-col hover:-translate-y-2 hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
+                style={{ animationDelay: `${(index % 15) * 50}ms` }}
               >
-                <h3 className="font-bold text-gray-900 text-lg capitalize truncate mb-2" title={commodity}>
-                  {commodity}
+                {/* Decorative background circle */}
+                <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#E4EFE7] rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500 -z-10" />
+                
+                <h3 className="font-bold text-gray-900 text-xl capitalize truncate z-10">
+                  {item.crop}
                 </h3>
-                <div className="mt-auto">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Expected Amount</p>
-                  <p className="text-2xl font-bold text-[#033621]">
-                    ₹{stateData[commodity].toFixed(1)} <span className="text-sm font-medium text-gray-500">/ kg</span>
+                <div className="flex gap-3 text-sm text-[#6B6355] mt-1 font-medium z-10">
+                  <span className="bg-white/50 px-2 py-0.5 rounded shadow-sm">{item.telugu_name}</span>
+                  <span className="bg-white/50 px-2 py-0.5 rounded shadow-sm">{item.hindi_name}</span>
+                </div>
+                
+                <div className="mt-6 border-t border-gray-100 pt-4 z-10">
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Indicative Value</p>
+                  <p className="text-3xl font-bold text-[#033621] drop-shadow-sm">
+                    ₹{item.modal_price_rs_per_kg} <span className="text-sm font-medium text-gray-500">/ kg</span>
                   </p>
                 </div>
               </div>

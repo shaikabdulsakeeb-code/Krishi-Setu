@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Sprout, LayoutDashboard, PlusCircle, Inbox, Handshake, LogOut, UserCircle, Menu, X, TrendingUp } from 'lucide-react';
 import TeluguWordHelper from '../../components/TeluguWordHelper';
+import VoiceAgent from '../../components/VoiceAgent';
 
 export default function FarmerLayout() {
   const { logout, profileIssue } = useAuth();
@@ -60,6 +61,7 @@ export default function FarmerLayout() {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <VoiceAgent />
               <TeluguWordHelper />
               <button
                 onClick={logout}
