@@ -11,11 +11,9 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
   
-  const [activeTab, setActiveTab] = useState(initialTab); // 'browse' | 'request' | 'myRequests'
+  const [activeTab, setActiveTab] = useState(initialTab); // 'browse' | 'request'
   const [crops, setCrops] = useState([]);
-  const [myRequests, setMyRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [requestsLoading, setRequestsLoading] = useState(true);
 
   // Browse state
   const [selectedCrop, setSelectedCrop] = useState(null);
@@ -57,21 +55,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
     fetchCrops();
   }, [currentUser.uid]);
 
-  useEffect(() => {
-    const unsubscribe = onValue(ref(db, 'buyerRequests'), (snapshot) => {
-      const requests = snapshotToList(snapshot)
-        .filter((request) => request.buyerId === currentUser.uid)
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setMyRequests(requests);
-      setRequestsLoading(false);
-    }, (err) => {
-      console.error('Error fetching buyer requests', err);
-      setMyRequests([]);
-      setRequestsLoading(false);
-    });
 
-    return () => unsubscribe();
-  }, [currentUser.uid]);
 
   // Path 1: Request specific crop
   async function handleCalculateDeal() {
@@ -173,8 +157,8 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
       setReqQuantity('');
       setReqPrice('');
       setDeliveryAddress('');
-      setActiveTab('myRequests');
-      navigate('/buyer/requests');
+      setActiveTab('browse');
+      navigate('/buyer/browse');
     } catch (err) {
       alert("Error posting request: " + err.message);
     } finally {
@@ -182,17 +166,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
     }
   }
 
-  async function handleCancelRequest(requestId) {
-    if (!confirm('Cancel this crop request? Farmers will no longer see it as open.')) return;
-    try {
-      await update(ref(db, `buyerRequests/${requestId}`), {
-        status: 'cancelled',
-        updatedAt: new Date().toISOString(),
-      });
-    } catch (err) {
-      alert('Unable to cancel request: ' + err.message);
-    }
-  }
+
 
   const availableCropNames = [...new Set(crops.map((crop) => crop.cropName).filter(Boolean))];
 
@@ -214,12 +188,6 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
             className={`${activeTab === 'request' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Post a General Request
-          </button>
-          <button
-            onClick={() => setActiveTab('myRequests')}
-            className={`${activeTab === 'myRequests' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            My Requests
           </button>
         </nav>
       </div>
@@ -327,7 +295,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
             )}
           </div>
         </div>
-      ) : activeTab === 'request' ? (
+      ) : (
         <div className="ledger-card max-w-2xl p-6 sm:p-8">
           <h3 className="text-lg font-bold text-gray-900 mb-2">Post a General Request</h3>
           <p className="text-sm text-gray-500 mb-6">Can't find what you're looking for? Post a request and let farmers come to you.</p>
@@ -390,50 +358,6 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
               {processing ? 'Posting...' : 'Post Request'}
             </button>
           </form>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-bold text-gray-900">My Crop Requests</h3>
-            <p className="text-sm text-gray-500">Track the requests you posted for farmers to respond to.</p>
-          </div>
-
-          {requestsLoading ? (
-            <div className="p-8 text-center text-gray-500">Loading your requests...</div>
-          ) : myRequests.length === 0 ? (
-            <div className="ledger-card p-8 text-center text-gray-500">
-              You have not posted any crop requests yet.
-            </div>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {myRequests.map((request) => (
-                <div key={request.id} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h4 className="text-lg font-bold capitalize text-gray-900">{request.cropName}</h4>
-                      <p className="mt-1 text-sm text-gray-500">{request.quantity} kg at ₹{request.pricePerUnit}/kg</p>
-                    </div>
-                    <span className={`rounded px-2 py-1 text-xs font-medium ${request.status === 'open' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>
-                      {request.status || 'open'}
-                    </span>
-                  </div>
-                  <div className="mt-4 space-y-2 text-sm text-gray-600">
-                    <p>Delivery: {request.deliveryLocation?.address || 'Profile location'}</p>
-                    <p>Posted: {request.createdAt ? new Date(request.createdAt).toLocaleDateString() : 'N/A'}</p>
-                  </div>
-                  {request.status === 'open' && (
-                    <button
-                      type="button"
-                      onClick={() => handleCancelRequest(request.id)}
-                      className="mt-4 w-full border border-red-200 bg-white text-sm font-medium transition btn-destructive"
-                    >
-                      Cancel Request
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       )}
     </div>

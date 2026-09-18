@@ -54,7 +54,7 @@ export default function Login() {
           <div className="mx-auto h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
             <Sprout className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="text-headline-lg mt-6">Sign in to Harvie</h2>
+          <h2 className="text-headline-lg mt-6">Sign in to Krishi Setu</h2>
           <p className="mt-2 text-sm text-gray-600">
             Or <Link to="/register" className="font-medium text-green-600 hover:text-green-500 transition-colors">create a new account</Link>
           </p>

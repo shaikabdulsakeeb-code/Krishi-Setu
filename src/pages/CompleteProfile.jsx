@@ -14,7 +14,6 @@ export default function CompleteProfile() {
   const [phone, setPhone] = useState(() => userData?.phone || '');
   const [location, setLocation] = useState(() => userData?.location || null); // { lat, lng, address }
   const [addressInput, setAddressInput] = useState(() => userData?.location?.address || '');
-  const [profilePic, setProfilePic] = useState(() => userData?.profilePic || currentUser?.photoURL || '');
   const [governmentFarmerId, setGovernmentFarmerId] = useState(() => userData?.governmentFarmerId || '');
   const [traderId, setTraderId] = useState(() => userData?.traderId || '');
   const [businessLicenseNumber, setBusinessLicenseNumber] = useState(() => userData?.businessLicenseNumber || '');
@@ -92,7 +91,7 @@ export default function CompleteProfile() {
         traderId: isBuyer ? traderId.trim() : null,
         businessLicenseNumber: isBuyer ? businessLicenseNumber.trim() : null,
         profileCompleted: true,
-        profilePic: profilePic.trim() || currentUser?.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`,
+        profilePic: currentUser?.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`,
       };
 
       await update(userRef, profileUpdates);
@@ -198,26 +197,15 @@ export default function CompleteProfile() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture URL</label>
-              <input
-                type="url"
-                className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
-                placeholder="https://example.com/photo.jpg"
-                value={profilePic}
-                onChange={(e) => setProfilePic(e.target.value)}
-              />
-              <p className="mt-1 text-xs text-gray-500">Leave blank to use your Google photo or generated initials.</p>
-            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
               <div className="flex space-x-2">
-                <input
-                  type="text"
+                <textarea
                   required
+                  rows="3"
                   placeholder="Street Address, City, State"
-                  className="form-input px-3 py-2 w-full flex-1 block"
+                  className="form-input px-3 py-2 w-full flex-1 block resize-none rounded-lg"
                   value={addressInput}
                   onChange={(e) => {
                     setAddressInput(e.target.value);
@@ -227,7 +215,7 @@ export default function CompleteProfile() {
                       address: e.target.value,
                     }));
                   }}
-                />
+                ></textarea>
                 <button
                   type="button"
                   onClick={handleGetLocation}
@@ -248,7 +236,7 @@ export default function CompleteProfile() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-[#033621] hover:bg-[#1f4d36] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#033621] transition-colors"
             >
               {loading ? 'Saving...' : (isProfileComplete ? 'Save Profile' : 'Complete Profile')}
             </button>

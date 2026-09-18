@@ -78,10 +78,10 @@ function speakTelugu(word) {
 }
 
 export default function TeluguWordHelper() {
-  const [enabled, setEnabled] = useState(() => localStorage.getItem('harvie-telugu-word-help') === 'on');
+  const [enabled, setEnabled] = useState(() => localStorage.getItem('krishi-setu-telugu-word-help') === 'on');
 
   useEffect(() => {
-    localStorage.setItem('harvie-telugu-word-help', enabled ? 'on' : 'off');
+    localStorage.setItem('krishi-setu-telugu-word-help', enabled ? 'on' : 'off');
   }, [enabled]);
 
   useEffect(() => {

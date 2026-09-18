@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, onValue, ref, update } from 'firebase/database';
+import { get, onValue, ref, update, push, set } from 'firebase/database';
 import { snapshotToList } from '../../utils/database';
+import { useConfirm } from '../../contexts/ConfirmContext';
+import ReviewModal from '../../components/ReviewModal';
 
 export default function MyDeals() {
   const { currentUser } = useAuth();
+  const confirm = useConfirm();
   
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [farmerDetails, setFarmerDetails] = useState({});
+  const [reviewingDeal, setReviewingDeal] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onValue(ref(db, 'deals'), async (snapshot) => {
@@ -34,7 +38,7 @@ export default function MyDeals() {
   }, [currentUser.uid]);
 
   async function updateDealStatus(dealId, newStatus) {
-    if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this deal?`)) return;
+    if (!(await confirm(`Are you sure you want to ${newStatus.toLowerCase()} this deal?`))) return;
     try {
       await update(ref(db, `deals/${dealId}`), {
         status: newStatus,
@@ -42,6 +46,32 @@ export default function MyDeals() {
       });
     } catch (err) {
       alert('Failed to update deal: ' + err.message);
+    }
+  }
+
+  async function handleReviewSubmit({ rating, review }) {
+    if (!reviewingDeal) return;
+    try {
+      // Create review
+      const reviewRef = push(ref(db, 'reviews'));
+      await set(reviewRef, {
+        dealId: reviewingDeal.id,
+        farmerId: reviewingDeal.farmerId,
+        buyerId: currentUser.uid,
+        rating,
+        reviewText: review.trim(),
+        createdAt: new Date().toISOString()
+      });
+
+      // Mark deal as completed
+      await update(ref(db, `deals/${reviewingDeal.id}`), {
+        status: 'COMPLETED',
+        updatedAt: new Date().toISOString()
+      });
+      
+      setReviewingDeal(null);
+    } catch (err) {
+      alert('Failed to submit review: ' + err.message);
     }
   }
 
@@ -65,8 +95,8 @@ export default function MyDeals() {
             const isDeclinedOrCancelled = deal.status === 'DECLINED' || deal.status === 'CANCELLED';
             
             const farmer = farmerDetails[deal.farmerId];
-            const rawValue = deal.quantity * deal.pricePerUnit;
-            const totalCost = rawValue + deal.transportCharge;
+            const rawValue = Number(deal.quantity) * Number(deal.pricePerUnit);
+            const totalCost = rawValue + Number(deal.transportCharge);
 
             return (
               <div key={deal.id} className={`bg-white rounded-xl shadow-sm border ${isConfirmed ? 'border-green-200 bg-green-50/10' : 'border-gray-200'} p-6 flex flex-col`}>
@@ -92,7 +122,7 @@ export default function MyDeals() {
                     <span>₹{rawValue}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Transport ({deal.transportDistanceKm || 'N/A'}km {deal.transportMode}):</span>
+                    <span className="text-gray-500">Transport ({deal.transportDistanceKm || 'N/A'}km {deal.transportMode || 'road'}):</span>
                     <span className="text-red-500">+ ₹{deal.transportCharge}</span>
                   </div>
                   {deal.transportSource && <p className="text-xs text-gray-400">Distance source: {deal.transportSource}</p>}
@@ -146,7 +176,7 @@ export default function MyDeals() {
                       </a>
                     </div>
                     <button
-                      onClick={() => updateDealStatus(deal.id, 'COMPLETED')}
+                      onClick={() => setReviewingDeal(deal)}
                       className="w-full bg-gray-900 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
                     >
                       Mark as Completed (Delivered)
@@ -163,6 +193,15 @@ export default function MyDeals() {
             );
           })}
         </div>
+      )}
+      
+      {reviewingDeal && (
+        <ReviewModal
+          isOpen={true}
+          onClose={() => setReviewingDeal(null)}
+          onSubmit={handleReviewSubmit}
+          farmerName={farmerDetails[reviewingDeal.farmerId]?.name || 'the farmer'}
+        />
       )}
     </div>
   );

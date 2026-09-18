@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   const [profileIssue, setProfileIssue] = useState('');
 
   function cacheKey(user) {
-    return `harvie-profile-${user.uid}`;
+    return `krishi-setu-profile-${user.uid}`;
   }
 
   function saveCachedProfile(user, profile) {
@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
   function buildStarterProfile(user, role) {
     return {
       email: user.email,
-      name: user.displayName || user.email?.split('@')[0] || 'Harvie user',
+      name: user.displayName || user.email?.split('@')[0] || 'Krishi Setu user',
       profilePic: user.photoURL || '',
       role,
       createdAt: new Date().toISOString(),

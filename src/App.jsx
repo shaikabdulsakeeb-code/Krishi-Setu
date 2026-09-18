@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 
+import Home from './pages/Home';
+import { ConfirmProvider } from './contexts/ConfirmContext';
+
 // Pages (to be implemented)
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -42,30 +45,14 @@ function ProtectedRoute({ children, role }) {
   return children;
 }
 
-function RoleBasedHome() {
-  const { currentUser, userData, loading } = useAuth();
-  
-  if (loading || (currentUser && !userData)) return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading your dashboard...</div>;
-  if (!userData) return <Navigate to="/login" />;
-
-  if (!isProfileReady(userData)) {
-    return <Navigate to={`/${userData.role}/profile`} replace />;
-  }
-
-  return userData.role === 'farmer' ? (
-    <Navigate to="/farmer/dashboard" />
-  ) : (
-    <Navigate to="/buyer/dashboard" />
-  );
-}
-
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<RoleBasedHome />} />
-          <Route path="/login" element={<Login />} />
+      <ConfirmProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
           <Route path="/complete-profile" element={
@@ -103,6 +90,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      </ConfirmProvider>
     </AuthProvider>
   );
 }

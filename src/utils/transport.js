@@ -112,7 +112,7 @@ export async function calculateTransportCost(farmerLocation, buyerLocation, quan
 
   // Determine mode
   let mode = 'road';
-  if (distanceKm > 300 && quantityKg > 500) {
+  if (distanceKm > 300) {
     mode = 'rail';
   }
 

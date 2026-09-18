@@ -5,10 +5,12 @@ import { get, push, ref, set, update } from 'firebase/database';
 import { calculateTransportCost } from '../../utils/transport';
 import { useNavigate } from 'react-router-dom';
 import { snapshotToList } from '../../utils/database';
+import { useConfirm } from '../../contexts/ConfirmContext';
 
 export default function BuyerRequests() {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
+  const confirm = useConfirm();
   
   const [requests, setRequests] = useState([]);
   const [farmerCrops, setFarmerCrops] = useState([]);
@@ -49,6 +51,9 @@ export default function BuyerRequests() {
           }
         }));
 
+        // Sort by netValue descending
+        enrichedReqs.sort((a, b) => (b.netValue || 0) - (a.netValue || 0));
+        
         setRequests(enrichedReqs);
       } catch (err) {
         console.error("Error fetching data", err);
@@ -70,7 +75,7 @@ export default function BuyerRequests() {
       alert('This request is missing a delivery location, so transport cannot be calculated yet.');
       return;
     }
-    if (!confirm('Are you sure you want to offer to fulfill this request? The buyer will need to confirm.')) return;
+    if (!(await confirm('Are you sure you want to offer to fulfill this request? The buyer will need to confirm.'))) return;
     
     // Find a matching crop
     const matchingCrop = farmerCrops.find(c => c.cropName.toLowerCase() === req.cropName.toLowerCase());

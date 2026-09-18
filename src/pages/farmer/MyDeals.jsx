@@ -3,9 +3,11 @@ import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { get, onValue, ref, update } from 'firebase/database';
 import { snapshotToList } from '../../utils/database';
+import { useConfirm } from '../../contexts/ConfirmContext';
 
 export default function MyDeals() {
   const { currentUser } = useAuth();
+  const confirm = useConfirm();
   
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,7 @@ export default function MyDeals() {
   }, [currentUser.uid]);
 
   async function updateDealStatus(dealId, newStatus) {
-    if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this deal?`)) return;
+    if (!(await confirm(`Are you sure you want to ${newStatus.toLowerCase()} this deal?`))) return;
     try {
       await update(ref(db, `deals/${dealId}`), {
         status: newStatus,
