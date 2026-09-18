@@ -93,6 +93,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
 
       const dealData = {
         cropId: selectedCrop.id,
+        cropName: selectedCrop.cropName,
         farmerId: selectedCrop.farmerId,
         buyerId: currentUser.uid,
         quantity: Number(offerQuantity),
@@ -206,7 +207,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 <div 
                   key={crop.id} 
                   onClick={() => { setSelectedCrop(crop); setCalculatedTransport(null); }}
-                  className={`bg-white rounded-xl shadow-sm border p-4 cursor-pointer transition-colors ${selectedCrop?.id === crop.id ? 'border-green-500 ring-1 ring-green-500' : 'border-gray-200 hover:border-green-300'}`}
+                  className={`bg-white rounded-xl shadow-sm border p-4 cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all duration-300 ${selectedCrop?.id === crop.id ? 'border-[#033621] ring-1 ring-[#033621]' : 'border-gray-200 hover:border-[#a0d2b3]'}`}
                 >
                   <div className="flex justify-between items-start">
                     <div>

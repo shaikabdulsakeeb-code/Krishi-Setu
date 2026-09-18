@@ -14,6 +14,7 @@ import FarmerDashboard from './pages/farmer/FarmerDashboard';
 import AddCrop from './pages/farmer/AddCrop';
 import BuyerRequests from './pages/farmer/BuyerRequests';
 import FarmerDeals from './pages/farmer/MyDeals';
+import MarketAnalysis from './pages/farmer/MarketAnalysis';
 import BuyerLayout from './pages/buyer/BuyerLayout';
 import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import BrowseCrops from './pages/buyer/BrowseCrops';
@@ -72,6 +73,7 @@ function App() {
             <Route path="add-crop" element={<AddCrop />} />
             <Route path="requests" element={<BuyerRequests />} />
             <Route path="deals" element={<FarmerDeals />} />
+            <Route path="market-analysis" element={<MarketAnalysis />} />
             <Route path="profile" element={<CompleteProfile />} />
           </Route>
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Sprout, LayoutDashboard, PlusCircle, Inbox, Handshake, LogOut, UserCircle, Menu, X } from 'lucide-react';
+import { Sprout, LayoutDashboard, PlusCircle, Inbox, Handshake, LogOut, UserCircle, Menu, X, TrendingUp } from 'lucide-react';
 import TeluguWordHelper from '../../components/TeluguWordHelper';
 
 export default function FarmerLayout() {
@@ -14,6 +14,7 @@ export default function FarmerLayout() {
     { name: 'Add Crop', path: '/farmer/add-crop', icon: PlusCircle },
     { name: 'Buyer Requests', path: '/farmer/requests', icon: Inbox },
     { name: 'My Deals', path: '/farmer/deals', icon: Handshake },
+    { name: 'Market', path: '/farmer/market-analysis', icon: TrendingUp },
     { name: 'Profile', path: '/farmer/profile', icon: UserCircle },
   ];
 
@@ -111,7 +112,7 @@ export default function FarmerLayout() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in-up">
         {profileIssue && <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">{profileIssue}</div>}
         <Outlet />
       </main>

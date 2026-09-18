@@ -99,11 +99,12 @@ export default function MyDeals() {
             const totalCost = rawValue + Number(deal.transportCharge);
 
             return (
-              <div key={deal.id} className={`bg-white rounded-xl shadow-sm border ${isConfirmed ? 'border-green-200 bg-green-50/10' : 'border-gray-200'} p-6 flex flex-col`}>
+              <div key={deal.id} className={`bg-white rounded-xl shadow-sm border ${isConfirmed ? 'border-green-200 bg-green-50/10' : 'border-gray-200'} p-6 flex flex-col hover:-translate-y-1 hover:shadow-md transition-all duration-300`}>
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">Deal: {deal.quantity} kg</h3>
-                    <p className="text-sm text-gray-500">Total Cost: <span className="font-bold text-gray-900">₹{totalCost}</span></p>
+                    <h3 className="text-lg font-bold text-gray-900 capitalize">{deal.cropName || 'Crop Deal'}</h3>
+                    <p className="text-sm font-medium text-gray-700">{deal.quantity} kg</p>
+                    <p className="text-sm text-gray-500 mt-1">Total Cost: <span className="font-bold text-[#033621]">₹{totalCost}</span></p>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded font-medium 
                     ${isPendingMe ? 'bg-yellow-100 text-yellow-800' : ''}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, push, ref, set, update } from 'firebase/database';
+import { get, onValue, push, ref, set, update } from 'firebase/database';
 import { calculateTransportCost } from '../../utils/transport';
 import { useNavigate } from 'react-router-dom';
 import { snapshotToList } from '../../utils/database';
@@ -18,11 +18,9 @@ export default function BuyerRequests() {
   const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
+    const unsubscribe = onValue(ref(db, 'buyerRequests'), async (snapshot) => {
       try {
-        // Fetch open buyer requests
-        const reqSnap = await get(ref(db, 'buyerRequests'));
-        const fetchedReqs = snapshotToList(reqSnap).filter((request) => request.status === 'open');
+        const fetchedReqs = snapshotToList(snapshot).filter((request) => request.status === 'open');
 
         // Fetch farmer's own crops to match
         const cropSnap = await get(ref(db, 'crops'));
@@ -60,9 +58,9 @@ export default function BuyerRequests() {
       } finally {
         setLoading(false);
       }
-    }
+    });
 
-    fetchData();
+    return () => unsubscribe();
   }, [currentUser.uid, userData?.location]);
 
   async function handleAddToDeal(req) {
@@ -85,6 +83,7 @@ export default function BuyerRequests() {
       
       const dealData = {
         cropId: matchingCrop ? matchingCrop.id : null,
+        cropName: req.cropName,
         farmerId: currentUser.uid,
         buyerId: req.buyerId,
         quantity: req.quantity,
@@ -138,7 +137,7 @@ export default function BuyerRequests() {
             const canOffer = hasMatchingCrop && Boolean(req.transport);
             
             return (
-              <div key={req.id} className="ledger-card p-6 flex flex-col">
+              <div key={req.id} className="ledger-card p-6 flex flex-col hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-lg font-bold text-gray-900 capitalize">{req.cropName}</h3>
                   <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-medium">
