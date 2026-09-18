@@ -13,7 +13,7 @@
     },
     "buyerRequests": {
       "$requestId": {
-        ".write": "auth != null && ((!data.exists() && newData.child('buyerId').val() === auth.uid) || (data.exists() && data.child('buyerId').val() === auth.uid))"
+        ".write": "auth != null && ((!data.exists() && newData.child('buyerId').val() === auth.uid) || (data.exists() && data.child('buyerId').val() === auth.uid) || (data.exists() && newData.exists() && root.child('users').child(auth.uid).child('role').val() === 'farmer' && data.child('status').val() === 'open' && newData.child('status').val() === 'deal_sent' && newData.child('buyerId').val() === data.child('buyerId').val()))"
       }
     },
     "deals": {

@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Sprout, LayoutDashboard, Search, Handshake, LogOut } from 'lucide-react';
+import { Sprout, LayoutDashboard, Search, Handshake, LogOut, UserCircle, ClipboardList } from 'lucide-react';
+import TeluguWordHelper from '../../components/TeluguWordHelper';
 
 export default function BuyerLayout() {
   const { logout, profileIssue } = useAuth();
@@ -9,7 +10,9 @@ export default function BuyerLayout() {
   const navItems = [
     { name: 'Dashboard', path: '/buyer/dashboard', icon: LayoutDashboard },
     { name: 'Browse Crops', path: '/buyer/browse', icon: Search },
+    { name: 'Requests', path: '/buyer/requests', icon: ClipboardList },
     { name: 'My Deals', path: '/buyer/deals', icon: Handshake },
+    { name: 'Profile', path: '/buyer/profile', icon: UserCircle },
   ];
 
   return (
@@ -21,7 +24,7 @@ export default function BuyerLayout() {
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <Sprout className="h-8 w-8 text-green-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">Krishi Setu</span>
+                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">Harvie</span>
               </div>
               <div className="hidden sm:-my-px sm:ml-8 sm:flex sm:space-x-8">
                 {navItems.map((item) => {
@@ -45,6 +48,7 @@ export default function BuyerLayout() {
               </div>
             </div>
             <div className="flex items-center">
+              <TeluguWordHelper />
               <button
                 onClick={logout}
                 className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-red-600 hover:bg-red-50 focus:outline-none"

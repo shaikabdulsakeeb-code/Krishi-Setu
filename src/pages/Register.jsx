@@ -58,7 +58,7 @@ export default function Register() {
           <div className="mx-auto h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
             <Sprout className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Join Krishi Setu</h2>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Join Harvie</h2>
           <p className="mt-2 text-sm text-gray-600">
             Already have an account? <Link to="/login" className="font-medium text-green-600 hover:text-green-500 transition-colors">Sign in</Link>
           </p>

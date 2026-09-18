@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 
@@ -16,15 +16,27 @@ import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import BrowseCrops from './pages/buyer/BrowseCrops';
 import BuyerDeals from './pages/buyer/MyDeals';
 
+function isProfileReady(userData) {
+  if (!userData?.name || !userData?.phone || !userData?.location) return false;
+  if (userData.role === 'farmer') return Boolean(userData.governmentFarmerId);
+  if (userData.role === 'buyer') return Boolean(userData.traderId && userData.businessLicenseNumber);
+  return true;
+}
+
 // Protected Route Component
 function ProtectedRoute({ children, role }) {
   const { currentUser, userData, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
   if (!currentUser) return <Navigate to="/login" />;
   
   if (role && userData?.role !== role) {
     return <Navigate to="/" />; // Redirect if wrong role
+  }
+
+  if (role && userData && !isProfileReady(userData) && !location.pathname.endsWith('/profile')) {
+    return <Navigate to={`/${userData.role}/profile`} replace />;
   }
 
   return children;
@@ -35,6 +47,10 @@ function RoleBasedHome() {
   
   if (loading || (currentUser && !userData)) return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading your dashboard...</div>;
   if (!userData) return <Navigate to="/login" />;
+
+  if (!isProfileReady(userData)) {
+    return <Navigate to={`/${userData.role}/profile`} replace />;
+  }
 
   return userData.role === 'farmer' ? (
     <Navigate to="/farmer/dashboard" />
@@ -69,6 +85,7 @@ function App() {
             <Route path="add-crop" element={<AddCrop />} />
             <Route path="requests" element={<BuyerRequests />} />
             <Route path="deals" element={<FarmerDeals />} />
+            <Route path="profile" element={<CompleteProfile />} />
           </Route>
 
           {/* Buyer Routes */}
@@ -80,7 +97,9 @@ function App() {
             <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<BuyerDashboard />} />
             <Route path="browse" element={<BrowseCrops />} />
+            <Route path="requests" element={<BrowseCrops initialTab="myRequests" />} />
             <Route path="deals" element={<BuyerDeals />} />
+            <Route path="profile" element={<CompleteProfile />} />
           </Route>
         </Routes>
       </BrowserRouter>

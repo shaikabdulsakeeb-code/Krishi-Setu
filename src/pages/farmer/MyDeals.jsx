@@ -65,13 +65,17 @@ export default function MyDeals() {
             const isDeclinedOrCancelled = deal.status === 'DECLINED' || deal.status === 'CANCELLED';
             
             const buyer = buyerDetails[deal.buyerId];
+            const cropValue = Number(deal.quantity || 0) * Number(deal.pricePerUnit || 0);
+            const transportCharge = Number(deal.transportCharge || 0);
+            const farmerReceives = deal.netValue ?? cropValue;
+            const buyerPays = cropValue + transportCharge;
 
             return (
               <div key={deal.id} className={`bg-white rounded-xl shadow-sm border ${isConfirmed ? 'border-green-200 bg-green-50/10' : 'border-gray-200'} p-6 flex flex-col`}>
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Deal: {deal.quantity} kg</h3>
-                    <p className="text-sm text-gray-500">Net Value: <span className="font-medium text-green-600">₹{deal.netValue}</span></p>
+                    <p className="text-sm text-gray-500">Farmer receives: <span className="font-medium text-green-600">₹{farmerReceives}</span></p>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded font-medium 
                     ${isPendingMe ? 'bg-yellow-100 text-yellow-800' : ''}
@@ -90,8 +94,21 @@ export default function MyDeals() {
                     <span>₹{deal.pricePerUnit}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Transport Mode:</span>
-                    <span className="capitalize">{deal.transportMode}</span>
+                    <span className="text-gray-500">Crop value:</span>
+                    <span>₹{cropValue}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Transport charge:</span>
+                    <span className="font-medium text-red-500">₹{transportCharge}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Distance and mode:</span>
+                    <span className="capitalize">{deal.transportDistanceKm || 'N/A'} km, {deal.transportMode || 'road'}</span>
+                  </div>
+                  {deal.transportSource && <p className="text-xs text-gray-400">Distance source: {deal.transportSource}</p>}
+                  <div className="flex justify-between border-t border-gray-100 pt-2 font-semibold">
+                    <span className="text-gray-900">Buyer total:</span>
+                    <span>₹{buyerPays}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Delivery Date:</span>

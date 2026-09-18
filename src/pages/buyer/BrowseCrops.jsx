@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, push, ref, set } from 'firebase/database';
+import { get, onValue, push, ref, set, update } from 'firebase/database';
 import { calculateTransportCost } from '../../utils/transport';
 import { useNavigate } from 'react-router-dom';
 import { snapshotToList } from '../../utils/database';
+import { geocodeAddress } from '../../utils/transport';
 
-export default function BrowseCrops() {
+export default function BrowseCrops({ initialTab = 'browse' }) {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
   
-  const [activeTab, setActiveTab] = useState('browse'); // 'browse' | 'request'
+  const [activeTab, setActiveTab] = useState(initialTab); // 'browse' | 'request' | 'myRequests'
   const [crops, setCrops] = useState([]);
+  const [myRequests, setMyRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [requestsLoading, setRequestsLoading] = useState(true);
 
   // Browse state
   const [selectedCrop, setSelectedCrop] = useState(null);
@@ -24,6 +27,7 @@ export default function BrowseCrops() {
   const [reqCropName, setReqCropName] = useState('');
   const [reqQuantity, setReqQuantity] = useState('');
   const [reqPrice, setReqPrice] = useState('');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
   
   const [processing, setProcessing] = useState(false);
 
@@ -53,6 +57,22 @@ export default function BrowseCrops() {
     fetchCrops();
   }, [currentUser.uid]);
 
+  useEffect(() => {
+    const unsubscribe = onValue(ref(db, 'buyerRequests'), (snapshot) => {
+      const requests = snapshotToList(snapshot)
+        .filter((request) => request.buyerId === currentUser.uid)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setMyRequests(requests);
+      setRequestsLoading(false);
+    }, (err) => {
+      console.error('Error fetching buyer requests', err);
+      setMyRequests([]);
+      setRequestsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser.uid]);
+
   // Path 1: Request specific crop
   async function handleCalculateDeal() {
     if (!selectedCrop || !offerPrice || !offerQuantity) return;
@@ -71,7 +91,7 @@ export default function BrowseCrops() {
     
     try {
       const transport = await calculateTransportCost(
-        selectedCrop.farmer.location, 
+        selectedCrop.cropLocation || selectedCrop.farmer.location, 
         userData.location, 
         Number(offerQuantity)
       );
@@ -95,6 +115,8 @@ export default function BrowseCrops() {
         pricePerUnit: Number(offerPrice),
         transportMode: calculatedTransport.mode,
         transportCharge: calculatedTransport.transportCharge,
+        transportDistanceKm: calculatedTransport.distanceKm,
+        transportSource: calculatedTransport.source,
         netValue: netValue, // Farmer receives this
         deliveryDate: selectedCrop.deliveryDate || selectedCrop.estimatedHarvestDate || new Date().toISOString().split('T')[0],
         status: 'PENDING_FARMER',
@@ -117,14 +139,28 @@ export default function BrowseCrops() {
   // Path 2: Post general request
   async function handlePostRequest(e) {
     e.preventDefault();
+    if (!userData?.location) {
+      alert('Please complete your profile location before posting a request. Farmers need it to calculate transport.');
+      navigate('/buyer/profile');
+      return;
+    }
+    if (Number(reqQuantity) <= 0 || Number(reqPrice) <= 0) {
+      alert('Enter a quantity and target price greater than zero.');
+      return;
+    }
+
     try {
       setProcessing(true);
+      const typedDeliveryAddress = deliveryAddress.trim();
+      const requestLocation = typedDeliveryAddress
+        ? await geocodeAddress(typedDeliveryAddress)
+        : userData.location;
       const requestData = {
         buyerId: currentUser.uid,
-        cropName: reqCropName,
+        cropName: reqCropName.trim(),
         quantity: Number(reqQuantity),
         pricePerUnit: Number(reqPrice),
-        deliveryLocation: userData.location,
+        deliveryLocation: requestLocation,
         status: 'open',
         createdAt: new Date().toISOString()
       };
@@ -136,12 +172,29 @@ export default function BrowseCrops() {
       setReqCropName('');
       setReqQuantity('');
       setReqPrice('');
+      setDeliveryAddress('');
+      setActiveTab('myRequests');
+      navigate('/buyer/requests');
     } catch (err) {
       alert("Error posting request: " + err.message);
     } finally {
       setProcessing(false);
     }
   }
+
+  async function handleCancelRequest(requestId) {
+    if (!confirm('Cancel this crop request? Farmers will no longer see it as open.')) return;
+    try {
+      await update(ref(db, `buyerRequests/${requestId}`), {
+        status: 'cancelled',
+        updatedAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      alert('Unable to cancel request: ' + err.message);
+    }
+  }
+
+  const availableCropNames = [...new Set(crops.map((crop) => crop.cropName).filter(Boolean))];
 
   return (
     <div className="space-y-6">
@@ -161,6 +214,12 @@ export default function BrowseCrops() {
             className={`${activeTab === 'request' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Post a General Request
+          </button>
+          <button
+            onClick={() => setActiveTab('myRequests')}
+            className={`${activeTab === 'myRequests' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            My Requests
           </button>
         </nav>
       </div>
@@ -245,6 +304,7 @@ export default function BrowseCrops() {
                         <span className="text-gray-500">Transport ({calculatedTransport.distanceKm}km {calculatedTransport.mode}):</span>
                         <span className="text-red-500">+ ₹{calculatedTransport.transportCharge}</span>
                       </div>
+                      <p className="text-xs text-gray-400">Distance source: {calculatedTransport.source}</p>
                       <div className="flex justify-between font-bold text-base pt-2 border-t">
                         <span className="text-gray-900">Total You Pay:</span>
                         <span className="text-green-600">₹{(Number(offerQuantity) * Number(offerPrice)) + calculatedTransport.transportCharge}</span>
@@ -267,7 +327,7 @@ export default function BrowseCrops() {
             )}
           </div>
         </div>
-      ) : (
+      ) : activeTab === 'request' ? (
         <div className="max-w-2xl bg-white rounded-xl shadow border border-gray-100 p-6 sm:p-8">
           <h3 className="text-lg font-bold text-gray-900 mb-2">Post a General Request</h3>
           <p className="text-sm text-gray-500 mb-6">Can't find what you're looking for? Post a request and let farmers come to you.</p>
@@ -278,10 +338,14 @@ export default function BrowseCrops() {
               <input
                 type="text"
                 required
+                list="available-crops"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
                 value={reqCropName}
                 onChange={(e) => setReqCropName(e.target.value)}
               />
+              <datalist id="available-crops">
+                {availableCropNames.map((name) => <option key={name} value={name} />)}
+              </datalist>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -305,6 +369,18 @@ export default function BrowseCrops() {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Location</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                placeholder={userData?.location?.address || 'Uses your saved profile location'}
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+              />
+              <p className="mt-1 text-xs text-gray-500">Leave blank to use your profile location.</p>
+            </div>
             
             <button
               type="submit"
@@ -314,6 +390,50 @@ export default function BrowseCrops() {
               {processing ? 'Posting...' : 'Post Request'}
             </button>
           </form>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">My Crop Requests</h3>
+            <p className="text-sm text-gray-500">Track the requests you posted for farmers to respond to.</p>
+          </div>
+
+          {requestsLoading ? (
+            <div className="p-8 text-center text-gray-500">Loading your requests...</div>
+          ) : myRequests.length === 0 ? (
+            <div className="bg-white p-8 rounded-xl shadow border border-gray-100 text-center text-gray-500">
+              You have not posted any crop requests yet.
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {myRequests.map((request) => (
+                <div key={request.id} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-lg font-bold capitalize text-gray-900">{request.cropName}</h4>
+                      <p className="mt-1 text-sm text-gray-500">{request.quantity} kg at ₹{request.pricePerUnit}/kg</p>
+                    </div>
+                    <span className={`rounded px-2 py-1 text-xs font-medium ${request.status === 'open' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>
+                      {request.status || 'open'}
+                    </span>
+                  </div>
+                  <div className="mt-4 space-y-2 text-sm text-gray-600">
+                    <p>Delivery: {request.deliveryLocation?.address || 'Profile location'}</p>
+                    <p>Posted: {request.createdAt ? new Date(request.createdAt).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  {request.status === 'open' && (
+                    <button
+                      type="button"
+                      onClick={() => handleCancelRequest(request.id)}
+                      className="mt-4 w-full rounded-md border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                    >
+                      Cancel Request
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

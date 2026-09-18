@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   const [profileIssue, setProfileIssue] = useState('');
 
   function cacheKey(user) {
-    return `krishi-setu-profile-${user.uid}`;
+    return `harvie-profile-${user.uid}`;
   }
 
   function saveCachedProfile(user, profile) {
@@ -40,11 +40,11 @@ export function AuthProvider({ children }) {
   function buildStarterProfile(user, role) {
     return {
       email: user.email,
-      name: user.displayName || user.email?.split('@')[0] || 'Krishi Setu user',
+      name: user.displayName || user.email?.split('@')[0] || 'Harvie user',
       profilePic: user.photoURL || '',
       role,
       createdAt: new Date().toISOString(),
-      profileCompleted: true,
+      profileCompleted: false,
     };
   }
 
@@ -81,6 +81,11 @@ export function AuthProvider({ children }) {
 
   function logout() {
     return signOut(auth);
+  }
+
+  function updateProfileData(profile) {
+    if (currentUser) saveCachedProfile(currentUser, profile);
+    setUserData(profile);
   }
 
   useEffect(() => {
@@ -132,6 +137,7 @@ export function AuthProvider({ children }) {
     login,
     loginWithGoogle,
     logout,
+    updateProfileData,
     loading,
     profileIssue
   };

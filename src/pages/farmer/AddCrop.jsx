@@ -3,9 +3,10 @@ import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { push, ref, set } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
+import { geocodeAddress } from '../../utils/transport';
 
 export default function AddCrop() {
-  const { currentUser } = useAuth();
+  const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
 
   const [cropName, setCropName] = useState('');
@@ -14,6 +15,7 @@ export default function AddCrop() {
   const [status, setStatus] = useState('pre_harvest'); // 'pre_harvest' | 'harvested'
   const [estimatedHarvestDate, setEstimatedHarvestDate] = useState('');
   const [deliveryDate, setDeliveryDate] = useState('');
+  const [cropLocationInput, setCropLocationInput] = useState(() => userData?.location?.address || '');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -24,15 +26,29 @@ export default function AddCrop() {
     try {
       setLoading(true);
       setError('');
+      const trimmedCropLocation = cropLocationInput.trim();
+      const shouldGeocodeCropLocation = trimmedCropLocation && (
+        trimmedCropLocation !== userData?.location?.address ||
+        !userData?.location?.lat ||
+        !userData?.location?.lng
+      );
+      const cropLocation = shouldGeocodeCropLocation
+        ? await geocodeAddress(trimmedCropLocation)
+        : userData?.location;
+
+      if (!cropLocation?.lat || !cropLocation?.lng) {
+        throw new Error('Please enter a crop pickup location or complete your profile location.');
+      }
       
       const cropData = {
         farmerId: currentUser.uid,
-        cropName,
+        cropName: cropName.trim(),
         quantity: Number(quantity),
         unit,
         status,
         estimatedHarvestDate: status === 'pre_harvest' ? estimatedHarvestDate : null,
         deliveryDate: status === 'harvested' ? deliveryDate : null,
+        cropLocation,
         createdAt: new Date().toISOString()
       };
 
@@ -145,6 +161,19 @@ export default function AddCrop() {
               />
             </div>
           )}
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Crop Pickup Location</label>
+            <input
+              type="text"
+              required
+              placeholder="Farm, village, city, state"
+              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+              value={cropLocationInput}
+              onChange={(e) => setCropLocationInput(e.target.value)}
+            />
+            <p className="mt-1 text-xs text-gray-500">Used to calculate transport charges. Leave as your profile location or enter another farm/pickup address.</p>
+          </div>
         </div>
 
         <div className="pt-4">

@@ -92,9 +92,10 @@ export default function MyDeals() {
                     <span>₹{rawValue}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Transport ({deal.transportMode}):</span>
+                    <span className="text-gray-500">Transport ({deal.transportDistanceKm || 'N/A'}km {deal.transportMode}):</span>
                     <span className="text-red-500">+ ₹{deal.transportCharge}</span>
                   </div>
+                  {deal.transportSource && <p className="text-xs text-gray-400">Distance source: {deal.transportSource}</p>}
                   <div className="flex justify-between">
                     <span className="text-gray-500">Delivery Date:</span>
                     <span>{deal.deliveryDate || 'N/A'}</span>

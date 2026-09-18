@@ -1,13 +1,15 @@
-# Krishi Setu
+# Harvie
 
-Krishi Setu is a farm-to-market marketplace that lets farmers list crops and lets buyers make transparent purchase offers. It includes role-based accounts, live deal updates, location-based transport estimates, and contact sharing only after a deal is confirmed.
+Harvie is a farm-to-market marketplace that lets farmers list crops and lets buyers make transparent purchase offers. It includes role-based accounts, live deal updates, location-based transport estimates, and contact sharing only after a deal is confirmed.
 
 ## What is included
 
 - Farmer and buyer sign-up, sign-in, Google sign-in, and profile completion
+- Farmer government ID, buyer Trader ID, and buyer Business License Number fields
 - GPS-assisted profile location and a manual-address fallback
 - Crop listings with harvest and delivery availability
-- Buyer crop browsing and open purchase requests
+- Buyer crop browsing, crop requests, and buyer request history
+- Toggleable Telugu word help using browser speech synthesis
 - Transport estimates using the Haversine distance formula
 - Offer, accept, decline, cancel, and delivery-completion workflows
 - Role-specific dashboards with live Realtime Database counts
@@ -23,6 +25,12 @@ Build a production bundle with:
 
 ```bash
 npm run build
+```
+
+To use OpenRouteService route distance instead of the straight-line fallback, create a `.env` file and add:
+
+```bash
+VITE_ORS_API_KEY=your_openrouteservice_api_key
 ```
 
 ## Firebase setup
@@ -41,4 +49,4 @@ Publish the included Realtime Database access rules from `database.rules.json` i
 
 ## Notes
 
-Transport estimates use straight-line distance and are intended for planning. For production routing, switch `USE_LIVE_ORS` in [src/utils/transport.js](src/utils/transport.js) to a secured server-side routing integration.
+Transport uses OpenRouteService when `VITE_ORS_API_KEY` is configured. If the key is missing or the route API cannot respond, Harvie falls back to a straight-line distance estimate.

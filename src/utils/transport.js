@@ -1,10 +1,73 @@
 // Constants
 export const TRANSPORT_RATE_ROAD_PER_KM = 18; // ₹18/km
 export const TRANSPORT_RATE_RAIL_PER_TONNE_KM = 1.5; // ₹1.5/tonne-km
+const OPENROUTE_SERVICE_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjExYWYxNTM1NDI5OTRlYzU5MDQ1YmIyZjVjMmI1NTQxIiwiaCI6Im11cm11cjY0In0=';
+const ORS_API_KEY = OPENROUTE_SERVICE_API_KEY || import.meta.env.VITE_ORS_API_KEY;
 
 export const TRANSPORT_CONFIG = {
-  USE_LIVE_ORS: false, // Set to true to use Cloud Function ORS API, false for Haversine
+  USE_LIVE_ORS: Boolean(ORS_API_KEY),
 };
+
+export async function geocodeAddress(address) {
+  if (!ORS_API_KEY) {
+    throw new Error('OpenRouteService API key is required to convert an address into latitude and longitude.');
+  }
+
+  const params = new URLSearchParams({
+    api_key: ORS_API_KEY,
+    text: address,
+    'boundary.country': 'IN',
+    size: '1',
+  });
+
+  const response = await fetch(`https://api.openrouteservice.org/geocode/search?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error('Could not find latitude and longitude for this address.');
+  }
+
+  const data = await response.json();
+  const coordinates = data?.features?.[0]?.geometry?.coordinates;
+  const label = data?.features?.[0]?.properties?.label;
+
+  if (!coordinates) {
+    throw new Error('No matching location found. Please enter a more specific address.');
+  }
+
+  return {
+    lng: coordinates[0],
+    lat: coordinates[1],
+    address: label || address,
+  };
+}
+
+async function getOpenRouteServiceDistance(farmerLocation, buyerLocation) {
+  const response = await fetch('https://api.openrouteservice.org/v2/directions/driving-car/json', {
+    method: 'POST',
+    headers: {
+      Authorization: ORS_API_KEY,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      coordinates: [
+        [farmerLocation.lng, farmerLocation.lat],
+        [buyerLocation.lng, buyerLocation.lat],
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('OpenRouteService could not calculate the route.');
+  }
+
+  const data = await response.json();
+  const distanceMeters = data?.routes?.[0]?.summary?.distance;
+  if (!distanceMeters) {
+    throw new Error('OpenRouteService returned no route distance.');
+  }
+
+  return distanceMeters / 1000;
+}
 
 // Haversine formula for straight-line distance
 export function getHaversineDistance(lat1, lon1, lat2, lon2) {
@@ -26,18 +89,26 @@ function deg2rad(deg) {
 
 export async function calculateTransportCost(farmerLocation, buyerLocation, quantityKg) {
   let distanceKm;
+  let source = 'straight-line estimate';
   
   if (TRANSPORT_CONFIG.USE_LIVE_ORS) {
-    // Call Cloud Function (Not implemented in this hackathon scope yet)
-    throw new Error("Live ORS not implemented yet. Set USE_LIVE_ORS to false.");
-  } else {
-    // Fallback: Haversine distance
+    try {
+      distanceKm = await getOpenRouteServiceDistance(farmerLocation, buyerLocation);
+      source = 'OpenRouteService road route';
+    } catch (error) {
+      console.warn(error.message);
+    }
+  }
+
+  if (!distanceKm) {
     distanceKm = getHaversineDistance(
-      farmerLocation.lat, 
-      farmerLocation.lng, 
-      buyerLocation.lat, 
+      farmerLocation.lat,
+      farmerLocation.lng,
+      buyerLocation.lat,
       buyerLocation.lng
     );
+  } else {
+    distanceKm = Math.max(distanceKm, 1);
   }
 
   // Determine mode
@@ -58,6 +129,7 @@ export async function calculateTransportCost(farmerLocation, buyerLocation, quan
   return {
     distanceKm: Math.round(distanceKm),
     mode,
-    transportCharge: Math.round(charge)
+    transportCharge: Math.round(charge),
+    source,
   };
 }

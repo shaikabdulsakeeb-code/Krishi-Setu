@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, push, ref, set } from 'firebase/database';
+import { get, push, ref, set, update } from 'firebase/database';
 import { calculateTransportCost } from '../../utils/transport';
 import { useNavigate } from 'react-router-dom';
 import { snapshotToList } from '../../utils/database';
@@ -28,16 +28,24 @@ export default function BuyerRequests() {
 
         setFarmerCrops(fetchedCrops);
 
-        // Pre-calculate transport costs for each request to show net value
         const enrichedReqs = await Promise.all(fetchedReqs.map(async (req) => {
+          const buyerSnap = await get(ref(db, `users/${req.buyerId}`));
+          const buyer = buyerSnap.exists() ? buyerSnap.val() : null;
+          const matchingCrop = fetchedCrops.find(c => c.cropName.toLowerCase() === req.cropName.toLowerCase());
+          const farmerLocation = matchingCrop?.cropLocation || userData?.location;
+
+          if (!farmerLocation || !req.deliveryLocation) {
+            return { ...req, buyer, transport: null, netValue: null };
+          }
+
           try {
-            const transport = await calculateTransportCost(userData.location, req.deliveryLocation, req.quantity);
+            const transport = await calculateTransportCost(farmerLocation, req.deliveryLocation, req.quantity);
             const rawValue = req.quantity * req.pricePerUnit;
             const netValue = rawValue - transport.transportCharge;
-            return { ...req, transport, netValue };
+            return { ...req, buyer, transport, netValue };
           } catch (e) {
             console.error("Error calculating transport for req", req.id, e);
-            return { ...req, transport: null, netValue: null };
+            return { ...req, buyer, transport: null, netValue: null };
           }
         }));
 
@@ -48,13 +56,20 @@ export default function BuyerRequests() {
         setLoading(false);
       }
     }
-    
-    if (userData?.location) {
-      fetchData();
-    }
+
+    fetchData();
   }, [currentUser.uid, userData?.location]);
 
   async function handleAddToDeal(req) {
+    if (!userData?.location) {
+      alert('Please complete your profile location before offering on buyer requests. It is needed to calculate transport.');
+      navigate('/farmer/profile');
+      return;
+    }
+    if (!req.transport) {
+      alert('This request is missing a delivery location, so transport cannot be calculated yet.');
+      return;
+    }
     if (!confirm('Are you sure you want to offer to fulfill this request? The buyer will need to confirm.')) return;
     
     // Find a matching crop
@@ -71,6 +86,8 @@ export default function BuyerRequests() {
         pricePerUnit: req.pricePerUnit,
         transportMode: req.transport.mode,
         transportCharge: req.transport.transportCharge,
+        transportDistanceKm: req.transport.distanceKm,
+        transportSource: req.transport.source,
         netValue: req.netValue,
         deliveryDate: matchingCrop?.deliveryDate || new Date().toISOString().split('T')[0],
         status: 'PENDING_BUYER',
@@ -81,6 +98,15 @@ export default function BuyerRequests() {
 
       const dealRef = push(ref(db, 'deals'));
       await set(dealRef, dealData);
+      try {
+        await update(ref(db, `buyerRequests/${req.id}`), {
+          status: 'deal_sent',
+          dealId: dealRef.key,
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (requestError) {
+        console.warn('Deal was created, but request status could not be updated.', requestError);
+      }
       alert('Deal initiated! Waiting for buyer to confirm.');
       navigate('/farmer/deals');
     } catch (err) {
@@ -104,6 +130,7 @@ export default function BuyerRequests() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {requests.map(req => {
             const hasMatchingCrop = farmerCrops.some(c => c.cropName.toLowerCase() === req.cropName.toLowerCase());
+            const canOffer = hasMatchingCrop && Boolean(req.transport);
             
             return (
               <div key={req.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
@@ -115,6 +142,10 @@ export default function BuyerRequests() {
                 </div>
                 
                 <div className="space-y-2 flex-grow mb-6">
+                  <div className="text-sm">
+                    <span className="text-gray-500">Buyer:</span>
+                    <span className="ml-2 font-medium text-gray-900">{req.buyer?.name || 'Buyer'}</span>
+                  </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Price Offered:</span>
                     <span className="font-medium">₹{req.pricePerUnit}/kg</span>
@@ -125,6 +156,7 @@ export default function BuyerRequests() {
                         <span className="text-gray-500">Transport ({req.transport.distanceKm}km {req.transport.mode}):</span>
                         <span className="text-red-500 font-medium">- ₹{req.transport.transportCharge}</span>
                       </div>
+                      <p className="text-xs text-gray-400">Distance source: {req.transport.source}</p>
                       <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-100">
                         <span className="text-gray-900">Net Value:</span>
                         <span className="text-green-600">₹{req.netValue}</span>
@@ -132,21 +164,26 @@ export default function BuyerRequests() {
                     </>
                   )}
                   <div className="text-xs text-gray-500 mt-2 truncate">
-                    📍 {req.deliveryLocation?.address}
+                    📍 {req.deliveryLocation?.address || 'Delivery location not available'}
                   </div>
+                  {!req.transport && (
+                    <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                      Transport charge will appear after both buyer and farmer locations are saved.
+                    </p>
+                  )}
                 </div>
 
                 <button
                   onClick={() => handleAddToDeal(req)}
-                  disabled={processingId === req.id || !hasMatchingCrop}
+                  disabled={processingId === req.id || !canOffer}
                   className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-                    ${hasMatchingCrop 
+                    ${canOffer 
                       ? 'bg-green-600 hover:bg-green-700' 
                       : 'bg-gray-300 cursor-not-allowed'
                     } focus:outline-none transition-colors`}
-                  title={!hasMatchingCrop ? "You don't have this crop listed." : ""}
+                  title={!hasMatchingCrop ? "You don't have this crop listed." : (!req.transport ? 'A saved farmer and buyer location is required.' : '')}
                 >
-                  {processingId === req.id ? 'Processing...' : (hasMatchingCrop ? 'Add to Deal' : 'No Matching Crop')}
+                  {processingId === req.id ? 'Processing...' : (canOffer ? 'Add to Deal' : (!hasMatchingCrop ? 'No Matching Crop' : 'Location Required'))}
                 </button>
               </div>
             );
