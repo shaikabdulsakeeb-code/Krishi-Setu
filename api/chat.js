@@ -34,9 +34,9 @@ CONTEXT:
 ${JSON.stringify(context)}
     `;
 
-    // The Gemini 1.5 Flash model is fast and supports system instructions
+    // The Gemini 3.6 Flash model is fast and supports system instructions
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3.6-flash',
       systemInstruction: systemInstruction,
     });
 
