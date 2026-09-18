@@ -1,8 +1,7 @@
 // Constants
 export const TRANSPORT_RATE_ROAD_PER_KM = 18; // ₹18/km
 export const TRANSPORT_RATE_RAIL_PER_TONNE_KM = 1.5; // ₹1.5/tonne-km
-const OPENROUTE_SERVICE_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjExYWYxNTM1NDI5OTRlYzU5MDQ1YmIyZjVjMmI1NTQxIiwiaCI6Im11cm11cjY0In0=';
-const ORS_API_KEY = OPENROUTE_SERVICE_API_KEY || import.meta.env.VITE_ORS_API_KEY;
+const ORS_API_KEY = import.meta.env.VITE_ORS_API_KEY;
 
 export const TRANSPORT_CONFIG = {
   USE_LIVE_ORS: Boolean(ORS_API_KEY),

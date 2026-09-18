@@ -110,14 +110,14 @@ export default function CompleteProfile() {
 
   return (
     <div className="py-4 sm:py-8">
-      <div className="max-w-2xl mx-auto space-y-8 bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+      <div className="ledger-card max-w-2xl mx-auto space-y-8 p-6 sm:p-8">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-700">
             <UserCircle className="h-7 w-7" />
           </div>
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-green-700">{isProfileComplete ? 'Profile' : 'Complete profile'}</p>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-gray-900">{isProfileComplete ? 'Edit Your Profile' : 'Complete Your Profile'}</h2>
+            <h2 className="text-headline-lg mt-1 sm:">{isProfileComplete ? 'Edit Your Profile' : 'Complete Your Profile'}</h2>
             <p className="mt-2 text-gray-600">
               Save your ID details, phone number, and location so transport, buyer requests, and deal contact details work correctly.
             </p>
@@ -140,7 +140,7 @@ export default function CompleteProfile() {
                 <input
                   type="text"
                   required
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                   placeholder="Enter your government-issued farmer ID"
                   value={governmentFarmerId}
                   onChange={(e) => setGovernmentFarmerId(e.target.value)}
@@ -154,7 +154,7 @@ export default function CompleteProfile() {
                 type="text"
                 required
                 placeholder="Enter your name"
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -167,7 +167,7 @@ export default function CompleteProfile() {
                   <input
                     type="text"
                     required
-                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                    className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                     placeholder="Enter trader ID"
                     value={traderId}
                     onChange={(e) => setTraderId(e.target.value)}
@@ -178,7 +178,7 @@ export default function CompleteProfile() {
                   <input
                     type="text"
                     required
-                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                    className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                     placeholder="Enter license number"
                     value={businessLicenseNumber}
                     onChange={(e) => setBusinessLicenseNumber(e.target.value)}
@@ -192,7 +192,7 @@ export default function CompleteProfile() {
               <input
                 type="tel"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -202,7 +202,7 @@ export default function CompleteProfile() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture URL</label>
               <input
                 type="url"
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                 placeholder="https://example.com/photo.jpg"
                 value={profilePic}
                 onChange={(e) => setProfilePic(e.target.value)}
@@ -217,7 +217,7 @@ export default function CompleteProfile() {
                   type="text"
                   required
                   placeholder="Street Address, City, State"
-                  className="flex-1 appearance-none rounded-lg block px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  className="form-input px-3 py-2 w-full flex-1 block"
                   value={addressInput}
                   onChange={(e) => {
                     setAddressInput(e.target.value);
@@ -232,7 +232,7 @@ export default function CompleteProfile() {
                   type="button"
                   onClick={handleGetLocation}
                   disabled={locating}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  className="form-input px-3 py-2 w-full inline-flex items-center shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:ring-2 focus:ring-offset-2"
                 >
                   {locating ? <Loader2 className="h-5 w-5 animate-spin text-green-600" /> : <MapPin className="h-5 w-5 text-green-600" />}
                   <span className="ml-2 hidden sm:inline">Use GPS</span>

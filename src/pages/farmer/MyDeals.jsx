@@ -49,10 +49,10 @@ export default function MyDeals() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">My Deals</h2>
+      <h2 className="text-headline-lg ">My Deals</h2>
       
       {deals.length === 0 ? (
-        <div className="bg-white p-8 rounded-xl shadow border border-gray-100 text-center">
+        <div className="ledger-card p-8 text-center">
           <p className="text-gray-500">You don't have any deals yet.</p>
         </div>
       ) : (
@@ -120,13 +120,13 @@ export default function MyDeals() {
                   <div className="flex space-x-3 mt-auto">
                     <button
                       onClick={() => updateDealStatus(deal.id, 'CONFIRMED')}
-                      className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
+                      className="flex-1 text-sm font-medium btn-primary"
                     >
                       Accept Deal
                     </button>
                     <button
                       onClick={() => updateDealStatus(deal.id, 'DECLINED')}
-                      className="flex-1 bg-white text-red-600 border border-red-200 py-2 px-4 rounded-md text-sm font-medium hover:bg-red-50 transition-colors"
+                      className="flex-1 bg-white border border-red-200 text-sm font-medium transition-colors btn-destructive"
                     >
                       Decline
                     </button>

@@ -119,11 +119,11 @@ export default function BuyerRequests() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Open Buyer Requests</h2>
+      <h2 className="text-headline-lg ">Open Buyer Requests</h2>
       <p className="text-gray-600">Browse what buyers are looking for and initiate a deal.</p>
       
       {requests.length === 0 ? (
-        <div className="bg-white p-8 rounded-xl shadow border border-gray-100 text-center">
+        <div className="ledger-card p-8 text-center">
           <p className="text-gray-500">No open buyer requests found at the moment.</p>
         </div>
       ) : (
@@ -133,7 +133,7 @@ export default function BuyerRequests() {
             const canOffer = hasMatchingCrop && Boolean(req.transport);
             
             return (
-              <div key={req.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+              <div key={req.id} className="ledger-card p-6 flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-lg font-bold text-gray-900 capitalize">{req.cropName}</h3>
                   <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-medium">

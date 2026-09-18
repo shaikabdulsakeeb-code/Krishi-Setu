@@ -51,7 +51,7 @@ export default function FarmerLayout() {
               <TeluguWordHelper />
               <button
                 onClick={logout}
-                className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-red-600 hover:bg-red-50 focus:outline-none"
+                className="inline-flex items-center border border-transparent text-sm font-medium focus:outline-none btn-destructive"
               >
                 <LogOut className="w-4 h-4 mr-2 hidden sm:block" />
                 Sign out

@@ -65,8 +65,8 @@ export default function AddCrop() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-xl shadow p-6 sm:p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">List a New Crop</h2>
+    <div className="ledger-card max-w-2xl mx-auto p-6 sm:p-8">
+      <h2 className="text-headline-lg mb-6">List a New Crop</h2>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm font-medium">{error}</div>}
@@ -79,7 +79,7 @@ export default function AddCrop() {
               type="text"
               required
               placeholder="e.g. Tomato, Wheat, Onion"
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+              className="form-input px-3 py-2 w-full relative block w-full"
               value={cropName}
               onChange={(e) => setCropName(e.target.value)}
             />
@@ -91,7 +91,7 @@ export default function AddCrop() {
               type="number"
               min="1"
               required
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+              className="form-input px-3 py-2 w-full relative block w-full"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
             />
@@ -100,7 +100,7 @@ export default function AddCrop() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
             <select
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm bg-white"
+              className="form-input px-3 py-2 w-full relative block w-full bg-white"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
             >
@@ -144,7 +144,7 @@ export default function AddCrop() {
               <input
                 type="date"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full"
                 value={estimatedHarvestDate}
                 onChange={(e) => setEstimatedHarvestDate(e.target.value)}
               />
@@ -155,7 +155,7 @@ export default function AddCrop() {
               <input
                 type="date"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full"
                 value={deliveryDate}
                 onChange={(e) => setDeliveryDate(e.target.value)}
               />
@@ -168,7 +168,7 @@ export default function AddCrop() {
               type="text"
               required
               placeholder="Farm, village, city, state"
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+              className="form-input px-3 py-2 w-full relative block w-full"
               value={cropLocationInput}
               onChange={(e) => setCropLocationInput(e.target.value)}
             />

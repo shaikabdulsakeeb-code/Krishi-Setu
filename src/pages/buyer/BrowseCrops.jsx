@@ -198,7 +198,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Crop Market</h2>
+      <h2 className="text-headline-lg ">Crop Market</h2>
       
       {/* Tabs */}
       <div className="border-b border-gray-200">
@@ -230,7 +230,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
             {loading ? (
               <div className="p-8 text-center text-gray-500">Loading crops...</div>
             ) : crops.length === 0 ? (
-              <div className="bg-white p-8 rounded-xl shadow border border-gray-100 text-center text-gray-500">
+              <div className="ledger-card p-8 text-center text-gray-500">
                 No crops listed currently.
               </div>
             ) : (
@@ -247,7 +247,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                       <p className="text-xs text-gray-400 truncate max-w-xs mt-1">📍 {crop.farmer?.location?.address}</p>
                     </div>
                     <div className="text-right">
-                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-medium">
+                      <span className="status-pill status-pill-success ">
                         {crop.quantity} {crop.unit} available
                       </span>
                       <p className="text-xs text-gray-500 mt-2 capitalize">{crop.status.replace('_', ' ')}</p>
@@ -260,7 +260,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
 
           <div>
             {selectedCrop ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
+              <div className="ledger-card p-6 sticky top-24">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Offer Deal</h3>
                 
                 <div className="space-y-4">
@@ -270,7 +270,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                       type="number"
                       min="1"
                       max={selectedCrop.unit === 'kg' ? selectedCrop.quantity : undefined}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                      className="form-input px-3 py-2 w-full w-full"
                       value={offerQuantity}
                       onChange={(e) => { setOfferQuantity(e.target.value); setCalculatedTransport(null); }}
                     />
@@ -280,7 +280,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                     <input
                       type="number"
                       min="1"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                      className="form-input px-3 py-2 w-full w-full"
                       value={offerPrice}
                       onChange={(e) => { setOfferPrice(e.target.value); setCalculatedTransport(null); }}
                     />
@@ -290,7 +290,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                     <button
                       onClick={handleCalculateDeal}
                       disabled={!offerQuantity || !offerPrice}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300"
+                      className="w-full text-sm font-medium disabled:bg-gray-300 btn-primary"
                     >
                       Calculate Transport & Total
                     </button>
@@ -312,7 +312,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                       <button
                         onClick={handleConfirmDeal}
                         disabled={processing}
-                        className="w-full mt-4 bg-green-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-700"
+                        className="w-full mt-4 text-sm font-medium btn-primary"
                       >
                         {processing ? 'Sending...' : 'Send Deal Offer to Farmer'}
                       </button>
@@ -328,7 +328,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
           </div>
         </div>
       ) : activeTab === 'request' ? (
-        <div className="max-w-2xl bg-white rounded-xl shadow border border-gray-100 p-6 sm:p-8">
+        <div className="ledger-card max-w-2xl p-6 sm:p-8">
           <h3 className="text-lg font-bold text-gray-900 mb-2">Post a General Request</h3>
           <p className="text-sm text-gray-500 mb-6">Can't find what you're looking for? Post a request and let farmers come to you.</p>
           
@@ -339,7 +339,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 type="text"
                 required
                 list="available-crops"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                className="form-input px-3 py-2 w-full w-full"
                 value={reqCropName}
                 onChange={(e) => setReqCropName(e.target.value)}
               />
@@ -353,7 +353,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 <input
                   type="number"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  className="form-input px-3 py-2 w-full w-full"
                   value={reqQuantity}
                   onChange={(e) => setReqQuantity(e.target.value)}
                 />
@@ -363,7 +363,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 <input
                   type="number"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  className="form-input px-3 py-2 w-full w-full"
                   value={reqPrice}
                   onChange={(e) => setReqPrice(e.target.value)}
                 />
@@ -374,7 +374,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
               <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Location</label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                className="form-input px-3 py-2 w-full w-full"
                 placeholder={userData?.location?.address || 'Uses your saved profile location'}
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
@@ -385,7 +385,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
             <button
               type="submit"
               disabled={processing}
-              className="w-full mt-4 bg-green-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-700"
+              className="w-full mt-4 text-sm font-medium btn-primary"
             >
               {processing ? 'Posting...' : 'Post Request'}
             </button>
@@ -401,7 +401,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
           {requestsLoading ? (
             <div className="p-8 text-center text-gray-500">Loading your requests...</div>
           ) : myRequests.length === 0 ? (
-            <div className="bg-white p-8 rounded-xl shadow border border-gray-100 text-center text-gray-500">
+            <div className="ledger-card p-8 text-center text-gray-500">
               You have not posted any crop requests yet.
             </div>
           ) : (
@@ -425,7 +425,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                     <button
                       type="button"
                       onClick={() => handleCancelRequest(request.id)}
-                      className="mt-4 w-full rounded-md border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                      className="mt-4 w-full border border-red-200 bg-white text-sm font-medium transition btn-destructive"
                     >
                       Cancel Request
                     </button>

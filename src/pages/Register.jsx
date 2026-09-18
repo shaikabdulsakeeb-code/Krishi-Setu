@@ -53,12 +53,12 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+      <div className="ledger-card max-w-md w-full space-y-8 p-8">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
             <Sprout className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Join Harvie</h2>
+          <h2 className="text-headline-lg mt-6">Join Harvie</h2>
           <p className="mt-2 text-sm text-gray-600">
             Already have an account? <Link to="/login" className="font-medium text-green-600 hover:text-green-500 transition-colors">Sign in</Link>
           </p>
@@ -89,7 +89,7 @@ export default function Register() {
               <input
                 type="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -101,7 +101,7 @@ export default function Register() {
                 type="password"
                 required
                 minLength="6"
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -112,7 +112,7 @@ export default function Register() {
               <input
                 type="password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                className="form-input px-3 py-2 w-full relative block w-full focus:z-10"
                 placeholder="Confirm Password"
                 value={passwordConfirm}
                 onChange={(e) => setPasswordConfirm(e.target.value)}
