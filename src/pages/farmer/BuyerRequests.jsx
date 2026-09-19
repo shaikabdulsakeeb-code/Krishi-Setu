@@ -191,10 +191,10 @@ export default function BuyerRequests() {
                   <button
                     onClick={() => handleAddToDeal(req)}
                     disabled={processingId === req.id || !canOffer}
-                    className={`w-full py-2.5 px-4 rounded-xl text-sm font-bold shadow-sm transition-all duration-200
+                    className={`w-full py-2.5 px-4 rounded-xl text-sm transition-all duration-200
                       ${canOffer 
-                        ? 'bg-[#033621] text-white hover:bg-[#1a4a36] hover:shadow-md' 
-                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        ? 'btn-primary' 
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed font-bold'
                       } focus:outline-none`}
                     title={!hasMatchingCrop ? "You don't have this crop listed." : (!req.transport ? 'A saved farmer and buyer location is required.' : '')}
                   >

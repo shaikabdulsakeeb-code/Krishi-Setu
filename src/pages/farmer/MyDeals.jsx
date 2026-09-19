@@ -168,7 +168,7 @@ export default function MyDeals() {
                     {isCompleted && (
                       <button
                         onClick={() => deleteDeal(deal.id)}
-                        className="w-full text-sm font-medium py-2 rounded-md bg-white border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                        className="w-full btn-danger py-2 mt-2"
                       >
                         Delete Record
                       </button>

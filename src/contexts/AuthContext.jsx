@@ -63,8 +63,18 @@ export function AuthProvider({ children }) {
     return user;
   }
 
-  function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+  async function login(email, password) {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    const userDocRef = ref(db, `users/${user.uid}`);
+    const userDoc = await get(userDocRef);
+    const profile = userDoc.exists() ? userDoc.val() : buildStarterProfile(user, 'buyer');
+    
+    saveCachedProfile(user, profile);
+    setUserData(profile);
+    
+    return { user, profile };
   }
 
   async function loginWithGoogle(role = 'buyer') {

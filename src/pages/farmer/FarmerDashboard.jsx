@@ -72,7 +72,7 @@ export default function FarmerDashboard() {
               <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
                 <button
                   onClick={() => setEditingCrop(crop)}
-                  className="flex-1 flex items-center justify-center gap-1 py-1.5 px-3 rounded-md bg-[#e4efe7] text-[#033621] text-sm font-medium hover:bg-[#c9e0d1] transition"
+                  className="flex-1 btn-success text-sm py-1.5 px-3 rounded-md transition"
                 >
                   <Edit2 className="w-4 h-4" /> Edit
                 </button>
@@ -82,7 +82,7 @@ export default function FarmerDashboard() {
                       remove(ref(db, `crops/${crop.id}`));
                     }
                   }}
-                  className="flex-1 flex items-center justify-center gap-1 py-1.5 px-3 rounded-md bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 transition"
+                  className="flex-1 btn-danger text-sm py-1.5 px-3 rounded-md transition"
                 >
                   <Trash2 className="w-4 h-4" /> Delete
                 </button>
