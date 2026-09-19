@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { ref, get, update, remove } from 'firebase/database';
-import { ShieldCheck, UserX, CheckCircle, LogOut, X, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, UserX, CheckCircle, LogOut, X, AlertTriangle, Handshake } from 'lucide-react';
 import Logo from '../../components/Logo';
+import { snapshotToList } from '../../utils/database';
 
 export default function AdminDashboard() {
   const { logout, userData } = useAuth();
   const [users, setUsers] = useState([]);
+  const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending'); // pending, approved, all
   const [roleFilter, setRoleFilter] = useState('all');
@@ -29,17 +31,9 @@ export default function AdminDashboard() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const usersRef = ref(db, 'users');
-      const snapshot = await get(usersRef);
-      if (snapshot.exists()) {
-        const usersList = [];
-        snapshot.forEach((child) => {
-          usersList.push({ id: child.key, ...child.val() });
-        });
-        setUsers(usersList);
-      } else {
-        setUsers([]);
-      }
+      const [usersSnapshot, dealsSnapshot] = await Promise.all([get(ref(db, 'users')), get(ref(db, 'deals'))]);
+      setUsers(usersSnapshot.exists() ? snapshotToList(usersSnapshot) : []);
+      setDeals(snapshotToList(dealsSnapshot).sort((left, right) => new Date(right.createdAt || 0) - new Date(left.createdAt || 0)));
     } catch (err) {
       console.error("Error fetching users", err);
     } finally {
@@ -91,6 +85,8 @@ export default function AdminDashboard() {
     const matchesRole = roleFilter === 'all' || u.role === roleFilter;
     return matchesStatus && matchesRole;
   });
+
+  const usersById = Object.fromEntries(users.map((user) => [user.id, user]));
 
   const canApprove = () => {
     if (!approvingUser) return false;
@@ -253,6 +249,28 @@ export default function AdminDashboard() {
             </table>
           </div>
         </div>
+
+        <section className="mt-10">
+          <div className="mb-4 flex items-center gap-2">
+            <Handshake className="h-6 w-6 text-[var(--primary)]" />
+            <div><h2 className="font-serif text-2xl font-bold">All Deals</h2><p className="mt-1 text-sm text-[var(--muted)]">{deals.length} deal{deals.length === 1 ? '' : 's'}, including removed records.</p></div>
+          </div>
+          <div className="overflow-hidden rounded-[20px] border border-[var(--line)] bg-[var(--glass)] shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-[var(--line)]">
+                <thead className="bg-[var(--bg-card-alt)]"><tr><th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Crop</th><th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Farmer</th><th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Buyer</th><th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Value</th><th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Status</th><th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Created</th></tr></thead>
+                <tbody className="divide-y divide-[var(--line)]">
+                  {deals.length === 0 ? <tr><td colSpan="6" className="px-6 py-8 text-center text-[var(--muted)]">No deals found.</td></tr> : deals.map((deal) => {
+                    const farmer = usersById[deal.farmerId];
+                    const buyer = usersById[deal.buyerId];
+                    const totalValue = Number(deal.quantity || 0) * Number(deal.pricePerUnit || 0) + Number(deal.transportCharge || 0);
+                    return <tr key={deal.id} className="hover:bg-[var(--bg-card-alt)]"><td className="px-6 py-4"><p className="font-semibold capitalize text-[var(--cream)]">{deal.cropName || 'Crop deal'}</p><p className="text-xs text-[var(--muted)]">{deal.quantity || 0} kg × ₹{deal.pricePerUnit || 0}</p></td><td className="px-6 py-4 text-sm text-[var(--cream)]">{farmer?.name || deal.farmerId || 'Not available'}</td><td className="px-6 py-4 text-sm text-[var(--cream)]">{buyer?.name || deal.buyerId || 'Not available'}</td><td className="px-6 py-4 text-sm font-semibold text-[var(--cream)]">₹{totalValue.toLocaleString('en-IN')}</td><td className="px-6 py-4"><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${deal.deletedAt ? 'bg-gray-100 text-gray-700' : deal.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : deal.status === 'CANCELLED' || deal.status === 'DECLINED' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>{deal.deletedAt ? 'Removed' : (deal.status || 'Pending').replace('_', ' ')}</span></td><td className="px-6 py-4 text-sm text-[var(--muted)]">{deal.createdAt ? new Date(deal.createdAt).toLocaleDateString('en-IN') : 'Not available'}</td></tr>;
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* User Details Modal */}

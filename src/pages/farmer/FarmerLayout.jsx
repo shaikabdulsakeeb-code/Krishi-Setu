@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { LayoutDashboard, PlusCircle, Inbox, Handshake, LogOut, UserCircle, Menu, X, TrendingUp, ChevronDown } from 'lucide-react';
+import VoiceAgent from '../../components/VoiceAgent';
 import LanguageSelector from '../../components/LanguageSelector';
 import Logo from '../../components/Logo';
 
@@ -62,6 +63,7 @@ export default function FarmerLayout() {
               </div>
             </div>
             <div className="relative flex shrink-0 items-center gap-2">
+              <VoiceAgent showLabel />
               <button onClick={() => setAccountMenuOpen((open) => !open)} aria-expanded={accountMenuOpen} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 text-sm font-semibold text-[var(--primary-dark)] hover:bg-[var(--bg-card-alt)]">
                 <UserCircle className="h-5 w-5 text-[var(--primary)]" />
                 <span className="hidden sm:inline">Account</span><ChevronDown className="h-4 w-4" />
