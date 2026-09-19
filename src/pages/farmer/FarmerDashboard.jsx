@@ -17,7 +17,7 @@ export default function FarmerDashboard() {
       const allCrops = snapshotToList(snapshot).filter((crop) => crop.farmerId === currentUser.uid);
       setCropCount(allCrops.length);
     }, () => setCropCount(0));
-    const ownDeals = onValue(ref(db, 'deals'), (snapshot) => setPendingDeals(snapshotToList(snapshot).filter((deal) => deal.farmerId === currentUser.uid && deal.status === 'PENDING_FARMER').length), () => setPendingDeals(0));
+    const ownDeals = onValue(ref(db, 'deals'), (snapshot) => setPendingDeals(snapshotToList(snapshot).filter((deal) => deal.farmerId === currentUser.uid && !deal.deletedAt && deal.status === 'PENDING_FARMER').length), () => setPendingDeals(0));
     const openRequests = onValue(ref(db, 'buyerRequests'), (snapshot) => setRequestCount(snapshotToList(snapshot).filter((request) => request.status === 'open').length), () => setRequestCount(0));
     return () => { ownCrops(); ownDeals(); openRequests(); };
   }, [currentUser.uid]);

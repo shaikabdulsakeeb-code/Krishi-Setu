@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, onValue, ref, update, remove } from 'firebase/database';
+import { get, onValue, ref, update } from 'firebase/database';
 import { snapshotToList } from '../../utils/database';
 import { useConfirm } from '../../contexts/ConfirmContext';
 
@@ -15,7 +15,7 @@ export default function MyDeals() {
 
   useEffect(() => {
     const unsubscribe = onValue(ref(db, 'deals'), async (snapshot) => {
-      const fetchedDeals = snapshotToList(snapshot).filter((deal) => deal.farmerId === currentUser.uid);
+      const fetchedDeals = snapshotToList(snapshot).filter((deal) => deal.farmerId === currentUser.uid && !deal.deletedAt);
       setDeals(fetchedDeals);
       
       // Fetch buyer details for CONFIRMED/COMPLETED deals to show the call button
@@ -48,11 +48,16 @@ export default function MyDeals() {
   }
 
   async function deleteDeal(dealId) {
-    if (!(await confirm('Are you sure you want to delete this completed deal?'))) return;
+    if (!(await confirm('Remove this completed deal from both deal lists?'))) return;
     try {
-      await remove(ref(db, `deals/${dealId}`));
+      const deletedAt = new Date().toISOString();
+      await update(ref(db, `deals/${dealId}`), {
+        deletedAt,
+        deletedBy: currentUser.uid,
+        updatedAt: deletedAt,
+      });
     } catch (err) {
-      alert('Failed to delete deal: ' + err.message);
+      alert('Failed to remove deal: ' + err.message);
     }
   }
 

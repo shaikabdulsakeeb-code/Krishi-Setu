@@ -22,6 +22,7 @@ import BuyerLayout from './pages/buyer/BuyerLayout';
 import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import BrowseCrops from './pages/buyer/BrowseCrops';
 import BuyerDeals from './pages/buyer/MyDeals';
+import MyRequests from './pages/buyer/MyRequests';
 
 function isProfileReady(userData) {
   if (!userData?.name || !userData?.phone || !userData?.location) return false;
@@ -124,7 +125,7 @@ function App() {
             <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<BuyerDashboard />} />
             <Route path="browse" element={<BrowseCrops />} />
-            <Route path="requests" element={<BrowseCrops initialTab="myRequests" />} />
+            <Route path="requests" element={<MyRequests />} />
             <Route path="deals" element={<BuyerDeals />} />
             <Route path="profile" element={<CompleteProfile />} />
           </Route>

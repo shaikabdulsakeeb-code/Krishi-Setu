@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import VoiceAgent from '../../components/VoiceAgent';
 import LanguageSelector from '../../components/LanguageSelector';
 import Logo from '../../components/Logo';
 import { LayoutDashboard, Search, Handshake, LogOut, UserCircle, ClipboardList, Menu, X, ChevronDown } from 'lucide-react';
@@ -70,7 +69,7 @@ export default function BuyerLayout() {
               {accountMenuOpen && (
                 <div className="absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3 shadow-lg">
                   <div className="border-b border-[var(--border)] pb-3"><LanguageSelector /></div>
-                  <div className="flex items-center justify-between gap-2 py-3"><VoiceAgent /><TeluguWordHelper /></div>
+                  <div className="py-3"><TeluguWordHelper /></div>
                   <Link to="/buyer/profile" onClick={() => setAccountMenuOpen(false)} className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-card-alt)]"><UserCircle className="h-4 w-4" /> Profile</Link>
                   <button onClick={logout} className="mt-1 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--danger)] hover:bg-red-50"><LogOut className="h-4 w-4" /> Sign out</button>
                 </div>
@@ -116,7 +115,7 @@ export default function BuyerLayout() {
             </div>
             <div className="border-t border-[var(--border)] p-4 space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Tools</p>
-              <div className="flex items-center justify-between gap-3"><LanguageSelector /><VoiceAgent /></div>
+              <LanguageSelector />
               <div><TeluguWordHelper /></div>
               <Link to="/buyer/profile" onClick={() => setMobileMenuOpen(false)} className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-[var(--primary)]"><UserCircle className="h-4 w-4" /> Profile</Link>
             </div>

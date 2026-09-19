@@ -1,4 +1,23 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+let marketPriceContext;
+
+async function getMarketPriceContext() {
+  if (marketPriceContext) return marketPriceContext;
+
+  const csv = await readFile(join(process.cwd(), 'crop_prices_all_commodities.csv'), 'utf8');
+  marketPriceContext = csv.trim().split(/\r?\n/).slice(1).map((line) => {
+    const separator = line.lastIndexOf(',');
+    return {
+      crop: line.slice(0, separator).replace(/^"|"$/g, '').trim(),
+      priceRsPerKg: Number(line.slice(separator + 1).trim()),
+    };
+  }).filter((item) => item.crop && Number.isFinite(item.priceRsPerKg));
+
+  return marketPriceContext;
+}
 
 export default async function handler(req, res) {
   // Handle CORS Preflight
@@ -23,6 +42,7 @@ export default async function handler(req, res) {
 
   try {
     const { message, context } = req.body;
+    const uploadedMarketPrices = await getMarketPriceContext();
 
     const systemInstruction = `
 You are the Krishi Setu voice assistant, an AI guiding Indian farmers.
@@ -32,6 +52,9 @@ Use the provided CONTEXT to answer the farmer's question.
 
 CONTEXT:
 ${JSON.stringify(context)}
+
+UPLOADED MARKET PRICE DATA (₹ per kg):
+${JSON.stringify(uploadedMarketPrices)}
     `;
 
     // The Gemini 3.6 Flash model is fast and supports system instructions

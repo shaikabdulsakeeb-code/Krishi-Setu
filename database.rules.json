@@ -18,7 +18,8 @@
     },
     "deals": {
       "$dealId": {
-        ".write": "auth != null && ((!data.exists() && (newData.child('buyerId').val() === auth.uid || newData.child('farmerId').val() === auth.uid)) || (data.exists() && newData.exists() && (data.child('buyerId').val() === auth.uid || data.child('farmerId').val() === auth.uid)))"
+        ".write": "auth != null && ((!data.exists() && newData.exists() && (newData.child('buyerId').val() === auth.uid || newData.child('farmerId').val() === auth.uid)) || (data.exists() && newData.exists() && (data.child('buyerId').val() === auth.uid || data.child('farmerId').val() === auth.uid)))",
+        ".validate": "!data.exists() || (newData.child('buyerId').val() === data.child('buyerId').val() && newData.child('farmerId').val() === data.child('farmerId').val())"
       }
     },
     "reviews": {

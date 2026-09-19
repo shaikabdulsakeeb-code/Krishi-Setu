@@ -13,7 +13,7 @@ export default function BuyerDashboard() {
 
   useEffect(() => {
     const crops = onValue(ref(db, 'crops'), (snapshot) => setCropCount(snapshotToList(snapshot).length), () => setCropCount(0));
-    const deals = onValue(ref(db, 'deals'), (snapshot) => setActiveDeals(snapshotToList(snapshot).filter((deal) => deal.buyerId === currentUser.uid && !['COMPLETED', 'CANCELLED', 'DECLINED'].includes(deal.status)).length), () => setActiveDeals(0));
+    const deals = onValue(ref(db, 'deals'), (snapshot) => setActiveDeals(snapshotToList(snapshot).filter((deal) => deal.buyerId === currentUser.uid && !deal.deletedAt && !['COMPLETED', 'CANCELLED', 'DECLINED'].includes(deal.status)).length), () => setActiveDeals(0));
     return () => { crops(); deals(); };
   }, [currentUser.uid]);
 

@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/chat.js": {
+      "includeFiles": "crop_prices_all_commodities.csv"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
