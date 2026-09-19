@@ -30,7 +30,7 @@ export default function MarketAnalysis() {
     if (currentUser) {
       const unsubscribe = onValue(ref(db, 'crops'), (snapshot) => {
         const crops = snapshotToList(snapshot).filter(c => c.farmerId === currentUser.uid);
-        setMyCrops(crops.map(c => c.cropName.toLowerCase()));
+        setMyCrops(crops.map(c => (c.cropName || '').toLowerCase()));
       });
       return () => unsubscribe();
     }
@@ -51,7 +51,7 @@ export default function MarketAnalysis() {
     if (!searchQuery) return data;
     const lowerQ = searchQuery.toLowerCase();
     return data.filter(item => 
-      item.crop.toLowerCase().includes(lowerQ) ||
+      (item.crop || '').toLowerCase().includes(lowerQ) ||
       (item.telugu_name && item.telugu_name.includes(lowerQ)) ||
       (item.hindi_name && item.hindi_name.includes(lowerQ))
     );
@@ -64,13 +64,13 @@ export default function MarketAnalysis() {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white border border-[#c0c9c1] p-3 rounded-lg shadow-xl animate-fade-in">
-          <p className="font-bold text-[#033621] text-lg capitalize">{data.crop}</p>
-          <div className="flex gap-2 text-sm text-gray-500 mb-2">
+        <div className="bg-[var(--cream)] border border-[var(--line)] p-3 rounded-lg shadow-xl animate-fade-in text-[var(--ink)]">
+          <p className="font-bold text-lg capitalize">{data.crop || 'Unknown Crop'}</p>
+          <div className="flex gap-2 text-sm text-[var(--bg-3)] opacity-80 mb-2">
             <span>{data.telugu_name}</span> &bull; <span>{data.hindi_name}</span>
           </div>
-          <p className="font-bold text-[#3a674f]">₹{data.modal_price_rs_per_kg} / kg</p>
-          <p className="text-xs text-gray-400 mt-1">{data.price_status}</p>
+          <p className="font-bold text-[var(--bg-3)]">₹{data.modal_price_rs_per_kg} / kg</p>
+          <p className="text-xs text-[var(--bg-2)] opacity-70 mt-1">{data.price_status}</p>
         </div>
       );
     }
@@ -91,27 +91,25 @@ export default function MarketAnalysis() {
           </div>
           
           <div className="flex items-center gap-4">
-            {myCrops.length > 0 && (
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
-                <input 
-                  type="checkbox" 
-                  className="rounded text-[#033621] focus:ring-[#033621]"
-                  checked={showOnlyMyCrops}
-                  onChange={(e) => setShowOnlyMyCrops(e.target.checked)}
-                />
-                Show only my crops
-              </label>
-            )}
+            <label className="flex items-center gap-2 text-sm font-medium text-[var(--ink)] bg-[var(--cream)] px-3 py-2 rounded-lg border border-[var(--line)] shadow-sm cursor-pointer hover:opacity-90 transition-opacity">
+              <input 
+                type="checkbox" 
+                className="rounded text-[var(--bg-2)] focus:ring-[var(--bg-2)]"
+                checked={showOnlyMyCrops}
+                onChange={(e) => setShowOnlyMyCrops(e.target.checked)}
+              />
+              Show only my crops
+            </label>
             <div className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
             <button 
               onClick={() => setViewMode('chart')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'chart' ? 'bg-[#e4efe7] text-[#033621]' : 'text-gray-500 hover:text-gray-900'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'chart' ? 'bg-[var(--bg-2)] text-[var(--cream)]' : 'text-gray-500 hover:text-gray-900'}`}
             >
               <BarChart3 className="w-4 h-4" /> Visual
             </button>
             <button 
               onClick={() => setViewMode('grid')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'grid' ? 'bg-[#e4efe7] text-[#033621]' : 'text-gray-500 hover:text-gray-900'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'grid' ? 'bg-[var(--bg-2)] text-[var(--cream)]' : 'text-gray-500 hover:text-gray-900'}`}
             >
               <Grip className="w-4 h-4" /> Grid
             </button>
@@ -150,13 +148,17 @@ export default function MarketAnalysis() {
            <div className="ledger-card p-12 text-center text-gray-500">
              Analyzing market data...
            </div>
+        ) : showOnlyMyCrops && myCrops.length === 0 ? (
+          <div className="ledger-card p-12 text-center text-[var(--muted)]">
+            No crops added.
+          </div>
         ) : filteredData.length === 0 ? (
-          <div className="ledger-card p-12 text-center text-gray-500">
+          <div className="ledger-card p-12 text-center text-[var(--muted)]">
             No crops found matching your filters.
           </div>
         ) : viewMode === 'chart' ? (
           <div className="ledger-card p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-6">
+            <h3 className="text-lg font-bold text-[var(--cream)] mb-6">
               {searchQuery ? 'Search Results Analysis' : 'Top 15 Most Valuable Crops (₹/kg)'}
             </h3>
             <div className="h-[400px] w-full">

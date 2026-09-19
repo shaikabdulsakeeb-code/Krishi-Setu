@@ -98,36 +98,43 @@
   --spacing-space-xl: 2.5rem;
 
   /* Tailwind Default Overrides */
-  --color-white: var(--color-surface-sheet);
-  --color-gray-50: var(--color-paper-canvas);
-  --color-gray-100: var(--color-hairline);
-  --color-gray-200: var(--color-hairline);
-  --color-gray-300: var(--color-hairline);
-  --color-gray-400: var(--color-ink-soft);
-  --color-gray-500: var(--color-ink-soft);
-  --color-gray-600: var(--color-ink-soft);
-  --color-gray-700: var(--color-ink);
-  --color-gray-800: var(--color-ink);
-  --color-gray-900: var(--color-ink);
+  --color-white: var(--glass);
+  --color-gray-50: rgba(255,246,214,0.02);
+  --color-gray-100: rgba(255,246,214,0.05);
+  --color-gray-200: var(--line);
+  --color-gray-300: rgba(255,246,214,0.3);
+  --color-gray-400: rgba(255,246,214,0.5);
+  --color-gray-500: var(--muted);
+  --color-gray-600: rgba(255,246,214,0.8);
+  --color-gray-700: rgba(255,246,214,0.9);
+  --color-gray-800: var(--cream);
+  --color-gray-900: var(--cream);
 
-  --color-green-50: var(--color-sativa-green-tint);
-  --color-green-100: var(--color-sativa-green-tint);
-  --color-green-500: var(--color-sativa-green);
-  --color-green-600: var(--color-sativa-green);
-  --color-green-700: var(--color-sativa-green-hover);
-  --color-green-800: var(--color-sativa-green-hover);
-  --color-green-900: var(--color-sativa-green-hover);
+  --color-green-50: rgba(255,216,77,0.1);
+  --color-green-100: rgba(255,216,77,0.15);
+  --color-green-500: var(--sun);
+  --color-green-600: var(--sun-2);
+  --color-green-700: var(--sun-2);
+  --color-green-800: var(--ink);
+  --color-green-900: var(--ink);
 
-  --color-blue-50: var(--color-turmeric-gold-tint);
-  --color-blue-500: var(--color-turmeric-gold);
-  --color-blue-600: var(--color-turmeric-gold);
-  --color-blue-700: var(--color-turmeric-gold-hover);
+  --color-blue-50: rgba(135,206,235,0.1);
+  --color-blue-100: rgba(135,206,235,0.2);
+  --color-blue-500: #87CEEB;
+  --color-blue-600: #87CEEB;
+  --color-blue-700: #E0F7FA;
 
-  --color-red-50: var(--color-clay-tint);
-  --color-red-100: var(--color-clay-tint);
-  --color-red-500: var(--color-clay);
-  --color-red-600: var(--color-clay);
-  --color-red-700: var(--color-clay);
+  --color-amber-50: rgba(255,183,77,0.1);
+  --color-amber-100: rgba(255,183,77,0.2);
+  --color-amber-500: #FFB74D;
+  --color-amber-600: #FFB74D;
+  --color-amber-700: #FFE0B2;
+
+  --color-red-50: rgba(239,83,80,0.1);
+  --color-red-100: rgba(239,83,80,0.2);
+  --color-red-500: #EF5350;
+  --color-red-600: #EF5350;
+  --color-red-700: #FFCDD2;
 
   --radius-xl: var(--radius-ledger);
   --radius-lg: var(--radius-btn);
