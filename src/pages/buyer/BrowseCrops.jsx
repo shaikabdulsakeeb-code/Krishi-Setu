@@ -207,20 +207,37 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 <div 
                   key={crop.id} 
                   onClick={() => { setSelectedCrop(crop); setCalculatedTransport(null); }}
-                  className={`bg-white rounded-xl shadow-sm border p-4 cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all duration-300 ${selectedCrop?.id === crop.id ? 'border-[#033621] ring-1 ring-[#033621]' : 'border-gray-200 hover:border-[#a0d2b3]'}`}
+                  className={`bg-white rounded-2xl shadow-sm border p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative group overflow-hidden ${selectedCrop?.id === crop.id ? 'border-[#033621] ring-2 ring-[#033621]/20' : 'border-gray-200 hover:border-[#a0d2b3]'}`}
                 >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 capitalize">{crop.cropName}</h3>
-                      <p className="text-sm text-gray-500">Farmer: {crop.farmer?.name || 'Unknown'}</p>
-                      <p className="text-xs text-gray-400 truncate max-w-xs mt-1">📍 {crop.farmer?.location?.address}</p>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full -z-10 group-hover:scale-125 transition-transform duration-500"></div>
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-[#f8fcf9] border border-green-100 flex items-center justify-center text-2xl shadow-sm">
+                        🌾
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 capitalize leading-tight">{crop.cropName}</h3>
+                        <p className="text-sm text-gray-500 font-medium">{crop.farmer?.name || 'Unknown Farmer'}</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="status-pill status-pill-success ">
-                        {crop.quantity} {crop.unit} available
-                      </span>
-                      <p className="text-xs text-gray-500 mt-2 capitalize">{crop.status.replace('_', ' ')}</p>
+                  </div>
+                  
+                  <div className="space-y-3 mt-4 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Available Quantity</span>
+                      <span className="font-bold text-[#033621]">{crop.quantity} {crop.unit}</span>
                     </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 bg-white p-2 rounded-lg border border-gray-100">
+                      <span className="text-blue-500">📍</span> 
+                      <span className="truncate flex-1">{crop.farmer?.location?.address || 'Location unknown'}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">Status</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize shadow-sm border ${crop.status === 'harvested' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
+                      {crop.status.replace('_', ' ')}
+                    </span>
                   </div>
                 </div>
               ))

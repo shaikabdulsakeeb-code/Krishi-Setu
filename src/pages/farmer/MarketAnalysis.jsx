@@ -3,29 +3,62 @@ import { Search, TrendingUp, Info, BarChart3, Grip } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
-import verifiedPrices from '../../data/verifiedPrices.json';
+import { getMarketPrices } from '../../utils/geminiApi';
+import { useAuth } from '../../hooks/useAuth';
+import { db } from '../../firebase';
+import { onValue, ref } from 'firebase/database';
+import { snapshotToList } from '../../utils/database';
 
 export default function MarketAnalysis() {
+  const { currentUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('chart'); // 'chart' or 'grid'
+  const [showOnlyMyCrops, setShowOnlyMyCrops] = useState(false);
+  
+  const [verifiedPrices, setVerifiedPrices] = useState([]);
+  const [myCrops, setMyCrops] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const prices = await getMarketPrices();
+      setVerifiedPrices(prices);
+      setLoading(false);
+    }
+    fetchData();
+
+    if (currentUser) {
+      const unsubscribe = onValue(ref(db, 'crops'), (snapshot) => {
+        const crops = snapshotToList(snapshot).filter(c => c.farmerId === currentUser.uid);
+        setMyCrops(crops.map(c => c.cropName.toLowerCase()));
+      });
+      return () => unsubscribe();
+    }
+  }, [currentUser]);
 
   // Sort by price descending for the chart/default view
   const sortedData = useMemo(() => {
     return [...verifiedPrices].sort((a, b) => b.modal_price_rs_per_kg - a.modal_price_rs_per_kg);
-  }, []);
+  }, [verifiedPrices]);
 
   const filteredData = useMemo(() => {
-    if (!searchQuery) return sortedData;
+    let data = sortedData;
+    
+    if (showOnlyMyCrops && myCrops.length > 0) {
+      data = data.filter(item => myCrops.includes(item.crop.toLowerCase()));
+    }
+
+    if (!searchQuery) return data;
     const lowerQ = searchQuery.toLowerCase();
-    return sortedData.filter(item => 
+    return data.filter(item => 
       item.crop.toLowerCase().includes(lowerQ) ||
       (item.telugu_name && item.telugu_name.includes(lowerQ)) ||
       (item.hindi_name && item.hindi_name.includes(lowerQ))
     );
-  }, [searchQuery, sortedData]);
+  }, [searchQuery, sortedData, showOnlyMyCrops, myCrops]);
 
   // Take top 15 for the chart if no search query, else show filtered
-  const chartData = searchQuery ? filteredData : sortedData.slice(0, 15);
+  const chartData = searchQuery || showOnlyMyCrops ? filteredData : sortedData.slice(0, 15);
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -54,10 +87,22 @@ export default function MarketAnalysis() {
               <TrendingUp className="h-8 w-8 text-[#3a674f]" />
               Market Analysis
             </h2>
-            <p className="text-gray-600 mt-1">Real-time indicative wholesale prices across India.</p>
+            <p className="text-gray-600 mt-1">Real-time indicative wholesale prices across India (Powered by Gemini).</p>
           </div>
           
-          <div className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
+          <div className="flex items-center gap-4">
+            {myCrops.length > 0 && (
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
+                <input 
+                  type="checkbox" 
+                  className="rounded text-[#033621] focus:ring-[#033621]"
+                  checked={showOnlyMyCrops}
+                  onChange={(e) => setShowOnlyMyCrops(e.target.checked)}
+                />
+                Show only my crops
+              </label>
+            )}
+            <div className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
             <button 
               onClick={() => setViewMode('chart')}
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'chart' ? 'bg-[#e4efe7] text-[#033621]' : 'text-gray-500 hover:text-gray-900'}`}
@@ -70,6 +115,7 @@ export default function MarketAnalysis() {
             >
               <Grip className="w-4 h-4" /> Grid
             </button>
+            </div>
           </div>
         </div>
         
@@ -100,9 +146,13 @@ export default function MarketAnalysis() {
 
       {/* Main Content Area */}
       <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-        {filteredData.length === 0 ? (
+        {loading ? (
+           <div className="ledger-card p-12 text-center text-gray-500">
+             Analyzing market data...
+           </div>
+        ) : filteredData.length === 0 ? (
           <div className="ledger-card p-12 text-center text-gray-500">
-            No crops found matching "{searchQuery}".
+            No crops found matching your filters.
           </div>
         ) : viewMode === 'chart' ? (
           <div className="ledger-card p-6">

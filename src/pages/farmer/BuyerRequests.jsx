@@ -137,58 +137,70 @@ export default function BuyerRequests() {
             const canOffer = hasMatchingCrop && Boolean(req.transport);
             
             return (
-              <div key={req.id} className="ledger-card p-6 flex flex-col hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 capitalize">{req.cropName}</h3>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-medium">
-                    {req.quantity} kg
-                  </span>
+              <div key={req.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col hover:-translate-y-1 hover:shadow-lg transition-all duration-300 overflow-hidden relative group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-50 to-emerald-50 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="p-6 border-b border-gray-50">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-bold text-gray-900 capitalize flex items-center gap-2">
+                      <span className="text-2xl">🌾</span> {req.cropName}
+                    </h3>
+                    <span className="bg-[#e4efe7] text-[#033621] text-xs px-3 py-1.5 rounded-full font-bold shadow-sm">
+                      {req.quantity} kg
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mt-3">
+                    <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                      {req.buyer?.name?.charAt(0) || 'B'}
+                    </div>
+                    <span className="font-medium text-gray-900">{req.buyer?.name || 'Buyer'}</span>
+                  </div>
                 </div>
                 
-                <div className="space-y-2 flex-grow mb-6">
-                  <div className="text-sm">
-                    <span className="text-gray-500">Buyer:</span>
-                    <span className="ml-2 font-medium text-gray-900">{req.buyer?.name || 'Buyer'}</span>
+                <div className="p-6 space-y-4 flex-grow bg-gray-50/30">
+                  <div className="flex justify-between items-center text-sm bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                    <span className="text-gray-500 font-medium">Offered Price</span>
+                    <span className="font-bold text-lg text-[#033621]">₹{req.pricePerUnit}<span className="text-xs text-gray-500 font-normal">/kg</span></span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Price Offered:</span>
-                    <span className="font-medium">₹{req.pricePerUnit}/kg</span>
-                  </div>
+
                   {req.transport && (
-                    <>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Transport ({req.transport.distanceKm}km {req.transport.mode}):</span>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Transport ({req.transport.distanceKm}km {req.transport.mode})</span>
                         <span className="text-red-500 font-medium">- ₹{req.transport.transportCharge}</span>
                       </div>
-                      <p className="text-xs text-gray-400">Distance source: {req.transport.source}</p>
-                      <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-100">
-                        <span className="text-gray-900">Net Value:</span>
-                        <span className="text-green-600">₹{req.netValue}</span>
+                      <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-200">
+                        <span className="text-gray-900">Your Net Value</span>
+                        <span className="text-[#3a674f] text-lg">₹{req.netValue}</span>
                       </div>
-                    </>
+                    </div>
                   )}
-                  <div className="text-xs text-gray-500 mt-2 truncate">
-                    📍 {req.deliveryLocation?.address || 'Delivery location not available'}
+                  
+                  <div className="flex items-start gap-2 text-xs text-gray-500 mt-2 bg-blue-50/50 p-2 rounded-md">
+                    <span className="text-blue-500 mt-0.5">📍</span> 
+                    <span className="line-clamp-2">{req.deliveryLocation?.address || 'Delivery location not available'}</span>
                   </div>
+
                   {!req.transport && (
-                    <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                    <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700 border border-amber-100">
                       Transport charge will appear after both buyer and farmer locations are saved.
                     </p>
                   )}
                 </div>
 
-                <button
-                  onClick={() => handleAddToDeal(req)}
-                  disabled={processingId === req.id || !canOffer}
-                  className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-                    ${canOffer 
-                      ? 'bg-green-600 hover:bg-green-700' 
-                      : 'bg-gray-300 cursor-not-allowed'
-                    } focus:outline-none transition-colors`}
-                  title={!hasMatchingCrop ? "You don't have this crop listed." : (!req.transport ? 'A saved farmer and buyer location is required.' : '')}
-                >
-                  {processingId === req.id ? 'Processing...' : (canOffer ? 'Add to Deal' : (!hasMatchingCrop ? 'No Matching Crop' : 'Location Required'))}
-                </button>
+                <div className="p-4 bg-white border-t border-gray-50">
+                  <button
+                    onClick={() => handleAddToDeal(req)}
+                    disabled={processingId === req.id || !canOffer}
+                    className={`w-full py-2.5 px-4 rounded-xl text-sm font-bold shadow-sm transition-all duration-200
+                      ${canOffer 
+                        ? 'bg-[#033621] text-white hover:bg-[#1a4a36] hover:shadow-md' 
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      } focus:outline-none`}
+                    title={!hasMatchingCrop ? "You don't have this crop listed." : (!req.transport ? 'A saved farmer and buyer location is required.' : '')}
+                  >
+                    {processingId === req.id ? 'Processing...' : (canOffer ? 'Offer Deal' : (!hasMatchingCrop ? 'No Matching Crop' : 'Location Required'))}
+                  </button>
+                </div>
               </div>
             );
           })}

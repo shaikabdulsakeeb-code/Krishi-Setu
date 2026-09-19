@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import VoiceAgent from '../../components/VoiceAgent';
+import LanguageSelector from '../../components/LanguageSelector';
 import { Sprout, LayoutDashboard, Search, Handshake, LogOut, UserCircle, ClipboardList, Menu, X } from 'lucide-react';
 import TeluguWordHelper from '../../components/TeluguWordHelper';
 
@@ -59,6 +61,8 @@ export default function BuyerLayout() {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <LanguageSelector />
+              <VoiceAgent />
               <TeluguWordHelper />
               <button
                 onClick={logout}

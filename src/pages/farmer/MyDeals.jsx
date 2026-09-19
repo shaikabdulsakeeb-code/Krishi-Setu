@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, onValue, ref, update } from 'firebase/database';
+import { get, onValue, ref, update, remove } from 'firebase/database';
 import { snapshotToList } from '../../utils/database';
 import { useConfirm } from '../../contexts/ConfirmContext';
 
@@ -44,6 +44,15 @@ export default function MyDeals() {
       });
     } catch (err) {
       alert('Failed to update deal: ' + err.message);
+    }
+  }
+
+  async function deleteDeal(dealId) {
+    if (!(await confirm('Are you sure you want to delete this completed deal?'))) return;
+    try {
+      await remove(ref(db, `deals/${dealId}`));
+    } catch (err) {
+      alert('Failed to delete deal: ' + err.message);
     }
   }
 
@@ -144,7 +153,7 @@ export default function MyDeals() {
 
                 {(isConfirmed || isCompleted) && buyer && (
                   <div className="mt-auto border-t border-gray-100 pt-4">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mb-3">
                       <div>
                         <p className="text-sm font-medium text-gray-900">{buyer.name}</p>
                         <p className="text-xs text-gray-500">{buyer.phone}</p>
@@ -156,6 +165,14 @@ export default function MyDeals() {
                         Call Buyer
                       </a>
                     </div>
+                    {isCompleted && (
+                      <button
+                        onClick={() => deleteDeal(deal.id)}
+                        className="w-full text-sm font-medium py-2 rounded-md bg-white border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        Delete Record
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

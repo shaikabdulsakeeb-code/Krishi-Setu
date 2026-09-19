@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, onValue, ref, update, push, set } from 'firebase/database';
+import { get, onValue, ref, update, push, set, remove } from 'firebase/database';
 import { snapshotToList } from '../../utils/database';
 import { useConfirm } from '../../contexts/ConfirmContext';
 import ReviewModal from '../../components/ReviewModal';
@@ -46,6 +46,15 @@ export default function MyDeals() {
       });
     } catch (err) {
       alert('Failed to update deal: ' + err.message);
+    }
+  }
+
+  async function deleteDeal(dealId) {
+    if (!(await confirm('Are you sure you want to delete this completed deal?'))) return;
+    try {
+      await remove(ref(db, `deals/${dealId}`));
+    } catch (err) {
+      alert('Failed to delete deal: ' + err.message);
     }
   }
 
@@ -186,8 +195,16 @@ export default function MyDeals() {
                 )}
                 
                 {isCompleted && (
-                  <div className="mt-auto p-3 bg-gray-50 text-gray-600 text-sm rounded-md text-center font-medium border border-gray-200">
-                    Deal Completed
+                  <div className="mt-auto space-y-3 pt-4 border-t border-gray-100">
+                    <div className="p-3 bg-gray-50 text-gray-600 text-sm rounded-md text-center font-medium border border-gray-200">
+                      Deal Completed
+                    </div>
+                    <button
+                      onClick={() => deleteDeal(deal.id)}
+                      className="w-full text-sm font-medium py-2 rounded-md bg-white border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      Delete Record
+                    </button>
                   </div>
                 )}
               </div>
