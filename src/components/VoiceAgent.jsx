@@ -140,7 +140,7 @@ export default function VoiceAgent() {
       </button>
       
       {error && (
-        <div className="absolute top-full mt-2 right-0 bg-red-50 text-red-600 text-xs p-2 rounded border border-red-200 whitespace-nowrap z-50">
+        <div className="absolute top-full mt-2 right-0 w-64 bg-red-50 text-red-600 text-xs p-2 rounded border border-red-200 z-50">
           {error}
         </div>
       )}

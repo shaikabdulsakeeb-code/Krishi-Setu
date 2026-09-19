@@ -74,7 +74,7 @@ export default function AddCrop() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Crop Name</label>
+            <label className="block text-sm font-medium text-[var(--cream)] mb-1">Crop Name</label>
             <input
               type="text"
               required
@@ -86,7 +86,7 @@ export default function AddCrop() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+            <label className="block text-sm font-medium text-[var(--cream)] mb-1">Quantity</label>
             <input
               type="number"
               min="1"
@@ -98,9 +98,9 @@ export default function AddCrop() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+            <label className="block text-sm font-medium text-[var(--cream)] mb-1">Unit</label>
             <select
-              className="form-input px-3 py-2 w-full relative block w-full bg-white"
+              className="form-input px-3 py-2 w-full relative block w-full"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
             >
@@ -111,36 +111,36 @@ export default function AddCrop() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Harvest Status</label>
-            <div className="flex space-x-4">
+            <label className="block text-sm font-medium text-[var(--cream)] mb-1">Harvest Status</label>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
               <label className="inline-flex items-center">
                 <input
                   type="radio"
-                  className="form-radio text-green-600 focus:ring-green-500"
+                  className="form-radio text-[var(--sun-2)] focus:ring-[var(--sun-2)]"
                   name="status"
                   value="pre_harvest"
                   checked={status === 'pre_harvest'}
                   onChange={() => setStatus('pre_harvest')}
                 />
-                <span className="ml-2 text-sm text-gray-700">Pre-harvest</span>
+                <span className="ml-2 text-sm text-[var(--cream)]">Pre-harvest</span>
               </label>
               <label className="inline-flex items-center">
                 <input
                   type="radio"
-                  className="form-radio text-green-600 focus:ring-green-500"
+                  className="form-radio text-[var(--sun-2)] focus:ring-[var(--sun-2)]"
                   name="status"
                   value="harvested"
                   checked={status === 'harvested'}
                   onChange={() => setStatus('harvested')}
                 />
-                <span className="ml-2 text-sm text-gray-700">Already Harvested</span>
+                <span className="ml-2 text-sm text-[var(--cream)]">Already Harvested</span>
               </label>
             </div>
           </div>
 
           {status === 'pre_harvest' ? (
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Harvest Date</label>
+              <label className="block text-sm font-medium text-[var(--cream)] mb-1">Estimated Harvest Date</label>
               <input
                 type="date"
                 required
@@ -151,7 +151,7 @@ export default function AddCrop() {
             </div>
           ) : (
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Available Delivery Date</label>
+              <label className="block text-sm font-medium text-[var(--cream)] mb-1">Available Delivery Date</label>
               <input
                 type="date"
                 required
@@ -163,7 +163,7 @@ export default function AddCrop() {
           )}
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Crop Pickup Location</label>
+            <label className="block text-sm font-medium text-[var(--cream)] mb-1">Crop Pickup Location</label>
             <input
               type="text"
               required
@@ -172,7 +172,7 @@ export default function AddCrop() {
               value={cropLocationInput}
               onChange={(e) => setCropLocationInput(e.target.value)}
             />
-            <p className="mt-1 text-xs text-gray-500">Used to calculate transport charges. Leave as your profile location or enter another farm/pickup address.</p>
+            <p className="mt-1 text-xs text-[var(--muted)]">Used to calculate transport charges. Leave as your profile location or enter another farm/pickup address.</p>
           </div>
         </div>
 
@@ -180,7 +180,7 @@ export default function AddCrop() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            className="btn-primary w-full py-2.5 px-4 text-sm"
           >
             {loading ? 'Submitting...' : 'List Crop'}
           </button>

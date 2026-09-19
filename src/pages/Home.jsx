@@ -12,21 +12,21 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-transparent text-[var(--cream)] font-sans">
+    <div className="app-shell min-h-screen bg-transparent text-[var(--cream)] font-sans">
       <nav className="fixed inset-x-0 top-0 z-50 py-4 transition-all duration-300 bg-[rgba(15,46,31,0.78)] backdrop-blur-md border-b border-[var(--line)]">
-        <div className="max-w-[1180px] w-[calc(100%-2.5rem)] mx-auto flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 text-[1.35rem] font-bold font-serif no-underline tracking-wide">
+        <div className="max-w-[1180px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)] mx-auto flex items-center justify-between gap-3">
+          <Link to="/" className="flex shrink-0 items-center gap-2 text-[1.15rem] sm:text-[1.35rem] font-bold font-serif no-underline tracking-wide">
             <Logo className="w-[34px] h-[34px]" />
             Krishi Setu
           </Link>
-          <ul className="hidden sm:flex gap-7 list-none m-0 p-0">
+          <ul className="hidden lg:flex gap-7 list-none m-0 p-0">
             <li><a href="#how" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--sun-2)] transition-colors">How it works</a></li>
             <li><a href="#join" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--sun-2)] transition-colors">Farmers and buyers</a></li>
             <li><a href="#why" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--sun-2)] transition-colors">Why Krishi Setu</a></li>
           </ul>
           <div className="flex items-center gap-2.5">
-            <Link to="/login" className="text-[var(--muted)] hover:text-[var(--sun-2)] transition-colors font-medium px-3 py-2 hidden sm:block">Log in</Link>
-            <Link to="/register" className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-full font-sans font-semibold text-base no-underline cursor-pointer border-2 border-transparent transition-all duration-200 bg-gradient-to-br from-[var(--sun-2)] to-[var(--sun)] text-[var(--ink)] shadow-[0_8px_24px_rgba(245,183,0,0.3)] hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(245,183,0,0.45)]">
+            <Link to="/login" className="text-[var(--muted)] hover:text-[var(--sun-2)] transition-colors font-medium px-3 py-2 hidden lg:block">Log in</Link>
+            <Link to="/register" className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 rounded-full font-sans font-semibold text-sm sm:text-base no-underline cursor-pointer border-2 border-transparent transition-all duration-200 bg-gradient-to-br from-[var(--sun-2)] to-[var(--sun)] text-[var(--ink)] shadow-[0_8px_24px_rgba(245,183,0,0.3)] hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(245,183,0,0.45)]">
               Join now
             </Link>
           </div>
@@ -36,7 +36,7 @@ export default function Home() {
       <main id="top">
         {/* HERO */}
         <section className="relative min-h-[100svh] flex items-center pt-[8.5rem] pb-[6rem] overflow-hidden">
-          <div className="absolute right-[-13vw] sm:right-[-30vw] lg:right-[-13vw] top-1/2 w-[clamp(380px,64vw,780px)] aspect-square -translate-y-1/2 pointer-events-none opacity-50 sm:opacity-100" aria-hidden="true">
+          <div className="absolute right-[-13vw] sm:right-[-30vw] lg:right-[-13vw] top-1/2 w-[clamp(380px,64vw,780px)] aspect-square -translate-y-1/2 pointer-events-none opacity-30 sm:opacity-70 lg:opacity-100" aria-hidden="true">
             <Logo sunflower={true} className="w-full h-full" />
           </div>
           <div className="relative z-10 max-w-[1180px] w-[calc(100%-2.5rem)] mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-8 items-center">

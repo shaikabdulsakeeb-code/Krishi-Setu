@@ -43,18 +43,18 @@
   --color-on-background: #1e1b14;
   
   /* New Theme Colors */
-  --bg-1: #0F2E1F;
-  --bg-2: #1F4D36;
-  --bg-3: #2F6B3F;
-  --band: #245A3D;
-  --sun: #F5B700;
-  --sun-2: #FFD84D;
-  --seed: #4A2C12;
-  --cream: #FFF6D6;
-  --ink: #12301F;
-  --muted: rgba(255,246,214,0.76);
-  --glass: rgba(255,246,214,0.09);
-  --line: rgba(255,246,214,0.2);
+  --bg-1: #0b2a20;
+  --bg-2: #123c2c;
+  --bg-3: #1d5a40;
+  --band: #174a35;
+  --sun: #e6a700;
+  --sun-2: #ffd15a;
+  --seed: #543015;
+  --cream: #fffdf4;
+  --ink: #102d21;
+  --muted: rgba(240, 248, 241, 0.74);
+  --glass: rgba(255, 255, 255, 0.09);
+  --line: rgba(231, 247, 235, 0.18);
 
   /* Mapping for existing custom utilities if needed */
   --color-sativa-green: var(--bg-2);
@@ -99,42 +99,49 @@
 
   /* Tailwind Default Overrides */
   --color-white: #ffffff;
-  --color-gray-50: rgba(255,246,214,0.02);
-  --color-gray-100: rgba(255,246,214,0.05);
+  --color-gray-50: rgba(255,255,255,0.04);
+  --color-gray-100: rgba(255,255,255,0.08);
   --color-gray-200: var(--line);
-  --color-gray-300: rgba(255,246,214,0.3);
-  --color-gray-400: rgba(255,246,214,0.5);
+  --color-gray-300: rgba(240,248,241,0.32);
+  --color-gray-400: rgba(240,248,241,0.52);
   --color-gray-500: var(--muted);
   --color-gray-600: rgba(255,246,214,0.8);
   --color-gray-700: rgba(255,246,214,0.9);
   --color-gray-800: var(--cream);
   --color-gray-900: var(--cream);
 
-  --color-green-50: rgba(15,46,31,0.2);
-  --color-green-100: rgba(15,46,31,0.4);
-  --color-green-500: var(--bg-3);
-  --color-green-600: var(--bg-2);
-  --color-green-700: #183d2b;
-  --color-green-800: var(--bg-1);
-  --color-green-900: #0a1f15;
+  --color-green-50: rgba(77, 208, 125, 0.12);
+  --color-green-100: rgba(77, 208, 125, 0.18);
+  --color-green-200: rgba(111, 221, 148, 0.35);
+  --color-green-500: #6fdd94;
+  --color-green-600: #55c87b;
+  --color-green-700: #aaf0c2;
+  --color-green-800: #d2f8de;
+  --color-green-900: #edfff2;
 
-  --color-blue-50: rgba(135,206,235,0.1);
-  --color-blue-100: rgba(135,206,235,0.2);
-  --color-blue-500: #87CEEB;
-  --color-blue-600: #87CEEB;
-  --color-blue-700: #E0F7FA;
+  --color-blue-50: rgba(102, 190, 255, 0.12);
+  --color-blue-100: rgba(102, 190, 255, 0.2);
+  --color-blue-500: #74c6ff;
+  --color-blue-600: #a7dcff;
+  --color-blue-700: #d7f0ff;
+  --color-blue-800: #e8f7ff;
 
-  --color-amber-50: rgba(255,183,77,0.1);
-  --color-amber-100: rgba(255,183,77,0.2);
-  --color-amber-500: #FFB74D;
-  --color-amber-600: #FFB74D;
-  --color-amber-700: #FFE0B2;
+  --color-amber-50: rgba(255, 193, 86, 0.12);
+  --color-amber-100: rgba(255, 193, 86, 0.2);
+  --color-amber-200: rgba(255, 210, 117, 0.38);
+  --color-amber-500: #ffbf54;
+  --color-amber-600: #ffd071;
+  --color-amber-700: #ffe1a5;
+  --color-amber-800: #ffedc9;
+  --color-amber-900: #fff7e3;
 
-  --color-red-50: rgba(239,83,80,0.1);
-  --color-red-100: rgba(239,83,80,0.2);
-  --color-red-500: #EF5350;
-  --color-red-600: #EF5350;
-  --color-red-700: #FFCDD2;
+  --color-red-50: rgba(255, 112, 112, 0.12);
+  --color-red-100: rgba(255, 112, 112, 0.2);
+  --color-red-200: rgba(255, 151, 151, 0.38);
+  --color-red-500: #ff8686;
+  --color-red-600: #ffaaaa;
+  --color-red-700: #ffc4c4;
+  --color-red-800: #ffe0e0;
 
   --radius-xl: var(--radius-ledger);
   --radius-lg: var(--radius-btn);
@@ -172,7 +179,13 @@
     color: var(--cream);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-width: 320px;
+    overflow-x: hidden;
   }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 
   .form-input:required:invalid {
     border-color: var(--color-clay);
@@ -183,6 +196,18 @@
     border-color: rgba(182, 71, 47, 0.4);
   }
 
+  /* Google Translate injects a separate branding node after #root. Keep the
+     language picker functional while preventing that unwanted page-end UI. */
+  .goog-te-banner-frame.skiptranslate,
+  .goog-te-balloon-frame,
+  .skiptranslate > iframe,
+  .goog-logo-link,
+  .goog-te-gadget > span {
+    display: none !important;
+  }
+
+  body { top: 0 !important; }
+
   button, input, select, textarea {
     font: inherit;
   }
@@ -191,6 +216,14 @@
 @layer utilities {
   .bg-white {
     background-color: var(--glass);
+  }
+
+  .text-\[\#033621\], .text-\[\#3a674f\] {
+    color: var(--sun-2);
+  }
+
+  .bg-\[\#f8fcf9\] {
+    background-color: rgba(255,255,255,0.08);
   }
 }
 
@@ -331,6 +364,19 @@
     color: var(--cream);
   }
 
+  .page-heading {
+    color: var(--cream);
+    font-family: var(--font-serif);
+    font-size: clamp(1.65rem, 4vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .app-shell {
+    min-width: 0;
+  }
+
   .ledger-divider {
     border-color: var(--color-hairline);
     border-width: 1px 0 0 0;
@@ -360,6 +406,7 @@
     line-height: 24px;
     transition: border-color 0.15s ease-in-out;
     box-shadow: none !important;
+    min-width: 0;
   }
   .form-input:focus {
     border-color: var(--sun-2);
@@ -511,4 +558,9 @@
     background: linear-gradient(135deg, var(--color-sativa-green) 0%, var(--color-sativa-green-hover) 100%);
     color: var(--color-surface-sheet);
   }
+}
+
+@media (max-width: 639px) {
+  .ledger-card { border-radius: 16px; }
+  .btn-primary, .btn-secondary, .btn-destructive { min-height: 44px; }
 }

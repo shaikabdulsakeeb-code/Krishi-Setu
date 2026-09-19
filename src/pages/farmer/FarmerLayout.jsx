@@ -21,16 +21,17 @@ export default function FarmerLayout() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-[var(--cream)]">
+    <div className="app-shell min-h-screen flex flex-col font-sans text-[var(--cream)]">
       {/* Top Nav */}
-      <nav className="bg-[rgba(15,46,31,0.78)] backdrop-blur-md border-b border-[var(--line)] sticky top-0 z-20 rounded-b-2xl shadow-sm">
+      <nav className="bg-[rgba(11,42,32,0.92)] backdrop-blur-md border-b border-[var(--line)] sticky top-0 z-20 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
+          <div className="flex justify-between gap-3 h-16">
+            <div className="flex min-w-0 items-center">
               {/* Mobile menu button */}
               <button
                 type="button"
-                className="sm:hidden -ml-2 mr-2 p-2 rounded-md text-[var(--muted)] hover:text-[var(--cream)] hover:bg-[var(--glass)] focus:outline-none"
+                aria-label="Open navigation"
+                className="lg:hidden -ml-2 mr-1 p-2 rounded-md text-[var(--muted)] hover:text-[var(--cream)] hover:bg-[var(--glass)] focus:outline-none"
                 onClick={() => setMobileMenuOpen(true)}
               >
                 <Menu className="h-6 w-6" />
@@ -38,9 +39,9 @@ export default function FarmerLayout() {
               
               <div className="flex-shrink-0 flex items-center">
                 <Logo className="w-8 h-8" />
-                <span className="ml-2 text-xl font-bold font-serif text-[var(--sun-2)]">Krishi Setu</span>
+                <span className="ml-2 text-lg sm:text-xl font-bold font-serif text-[var(--sun-2)]">Krishi Setu</span>
               </div>
-              <div className="hidden sm:-my-px sm:ml-8 sm:flex sm:space-x-8">
+              <div className="hidden lg:-my-px lg:ml-8 lg:flex lg:space-x-6">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = location.pathname === item.path;
@@ -61,12 +62,15 @@ export default function FarmerLayout() {
                 })}
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <LanguageSelector />
-              <VoiceAgent />
+            <div className="flex shrink-0 items-center gap-2 lg:gap-3">
+              <div className="hidden lg:flex lg:items-center lg:gap-3">
+                <LanguageSelector />
+                <VoiceAgent />
+              </div>
               <button
                 onClick={logout}
-                className="inline-flex items-center px-3 py-1.5 border border-[var(--line)] rounded-full text-sm font-medium text-[var(--clay)] hover:bg-[var(--line)] transition-colors"
+                aria-label="Sign out"
+                className="inline-flex items-center px-2.5 sm:px-3 py-2 border border-[var(--line)] rounded-full text-sm font-medium text-[#ffb4a8] hover:bg-[var(--glass)] transition-colors"
               >
                 <LogOut className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Sign out</span>
@@ -78,9 +82,9 @@ export default function FarmerLayout() {
 
       {/* Mobile Sidebar (Drawer) */}
       {mobileMenuOpen && (
-        <div className="relative z-40 sm:hidden">
+        <div className="relative z-40 lg:hidden">
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}></div>
-          <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-[var(--bg-2)] shadow-xl">
+          <div className="fixed inset-y-0 left-0 flex w-[min(19rem,86vw)] flex-col bg-[var(--bg-2)] shadow-xl">
             <div className="flex items-center justify-between px-4 h-16 border-b border-[var(--line)]">
               <span className="text-xl font-bold font-serif text-[var(--sun-2)]">Krishi Setu</span>
               <button
@@ -110,12 +114,16 @@ export default function FarmerLayout() {
                 );
               })}
             </div>
+            <div className="border-t border-[var(--line)] p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Tools</p>
+              <div className="flex items-center justify-between gap-3"><LanguageSelector /><VoiceAgent /></div>
+            </div>
           </div>
         </div>
       )}
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in-up">
+      <main className="flex-1 min-w-0 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in-up">
         {profileIssue && <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">{profileIssue}</div>}
         <Outlet />
       </main>

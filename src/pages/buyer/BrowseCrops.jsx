@@ -177,16 +177,16 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
       
       {/* Tabs */}
       <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+        <nav className="-mb-px flex gap-4 overflow-x-auto sm:gap-8">
           <button
             onClick={() => setActiveTab('browse')}
-            className={`${activeTab === 'browse' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            className={`${activeTab === 'browse' ? 'border-[var(--sun-2)] text-[var(--sun-2)]' : 'border-transparent text-[var(--muted)] hover:text-[var(--cream)] hover:border-[var(--line)]'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Browse Farmers' Crops
           </button>
           <button
             onClick={() => setActiveTab('request')}
-            className={`${activeTab === 'request' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            className={`${activeTab === 'request' ? 'border-[var(--sun-2)] text-[var(--sun-2)]' : 'border-transparent text-[var(--muted)] hover:text-[var(--cream)] hover:border-[var(--line)]'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Post a General Request
           </button>
@@ -194,7 +194,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
       </div>
 
       {activeTab === 'browse' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             {loading ? (
               <div className="p-8 text-center text-gray-500">Loading crops...</div>
@@ -207,7 +207,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 <div 
                   key={crop.id} 
                   onClick={() => { setSelectedCrop(crop); setCalculatedTransport(null); }}
-                  className={`bg-white rounded-2xl shadow-sm border p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative group overflow-hidden ${selectedCrop?.id === crop.id ? 'border-[#033621] ring-2 ring-[#033621]/20' : 'border-gray-200 hover:border-[#a0d2b3]'}`}
+                  className={`ledger-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative group overflow-hidden ${selectedCrop?.id === crop.id ? 'border-[var(--sun-2)] ring-2 ring-[var(--sun-2)]/20' : 'hover:border-[var(--sun-2)]'}`}
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full -z-10 group-hover:scale-125 transition-transform duration-500"></div>
                   <div className="flex justify-between items-start mb-3">
@@ -333,7 +333,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 {availableCropNames.map((name) => <option key={name} value={name} />)}
               </datalist>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Quantity (kg)</label>
                 <input
