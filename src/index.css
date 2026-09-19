@@ -98,7 +98,7 @@
   --spacing-space-xl: 2.5rem;
 
   /* Tailwind Default Overrides */
-  --color-white: var(--glass);
+  --color-white: #ffffff;
   --color-gray-50: rgba(255,246,214,0.02);
   --color-gray-100: rgba(255,246,214,0.05);
   --color-gray-200: var(--line);
@@ -110,13 +110,13 @@
   --color-gray-800: var(--cream);
   --color-gray-900: var(--cream);
 
-  --color-green-50: rgba(255,216,77,0.1);
-  --color-green-100: rgba(255,216,77,0.15);
-  --color-green-500: var(--sun);
-  --color-green-600: var(--sun-2);
-  --color-green-700: var(--sun-2);
-  --color-green-800: var(--ink);
-  --color-green-900: var(--ink);
+  --color-green-50: rgba(15,46,31,0.2);
+  --color-green-100: rgba(15,46,31,0.4);
+  --color-green-500: var(--bg-3);
+  --color-green-600: var(--bg-2);
+  --color-green-700: #183d2b;
+  --color-green-800: var(--bg-1);
+  --color-green-900: #0a1f15;
 
   --color-blue-50: rgba(135,206,235,0.1);
   --color-blue-100: rgba(135,206,235,0.2);
@@ -185,6 +185,12 @@
 
   button, input, select, textarea {
     font: inherit;
+  }
+}
+
+@layer utilities {
+  .bg-white {
+    background-color: var(--glass);
   }
 }
 

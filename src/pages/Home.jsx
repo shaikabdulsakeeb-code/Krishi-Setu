@@ -1,8 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { ShieldCheck, Tractor, ArrowRight } from 'lucide-react';
 import Logo from '../components/Logo';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Home() {
+  const { currentUser, userData, loading } = useAuth();
+
+  if (!loading && currentUser && userData?.role) {
+    if (userData.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
+    return <Navigate to={`/${userData.role}/dashboard`} replace />;
+  }
+
   return (
     <div className="min-h-screen bg-transparent text-[var(--cream)] font-sans">
       <nav className="fixed inset-x-0 top-0 z-50 py-4 transition-all duration-300 bg-[rgba(15,46,31,0.78)] backdrop-blur-md border-b border-[var(--line)]">
