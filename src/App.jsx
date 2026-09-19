@@ -36,7 +36,7 @@ function ProtectedRoute({ children, role }) {
   const location = useLocation();
 
   if (loading) return <div className="h-screen flex items-center justify-center bg-[var(--bg-1)] text-[var(--cream)] font-serif text-2xl">Loading...</div>;
-  if (!currentUser) return <Navigate to="/login" />;
+  if (!currentUser) return <Navigate to="/" replace />;
   
   if (role && userData?.role !== role) {
     return <Navigate to="/" />; // Redirect if wrong role
