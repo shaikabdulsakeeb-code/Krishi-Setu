@@ -278,7 +278,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                       disabled={!offerQuantity || !offerPrice}
                       className="w-full text-sm font-medium disabled:bg-gray-300 btn-primary"
                     >
-                      Calculate Transport & Total
+                      Calculate Expected Transport & Total
                     </button>
                   ) : (
                     <div className="bg-gray-50 p-4 rounded-md border border-gray-200 space-y-2 text-sm">
@@ -287,7 +287,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                         <span>₹{Number(offerQuantity) * Number(offerPrice)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Transport ({calculatedTransport.distanceKm}km {calculatedTransport.mode}):</span>
+                        <span className="text-gray-500">Expected Transport ({calculatedTransport.distanceKm}km {calculatedTransport.mode}):</span>
                         <span className="text-red-500">+ ₹{calculatedTransport.transportCharge}</span>
                       </div>
                       <p className="text-xs text-gray-400">Distance source: {calculatedTransport.source}</p>

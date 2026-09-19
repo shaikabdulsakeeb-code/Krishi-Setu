@@ -1,28 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { onValue, ref, remove } from 'firebase/database';
-import { ArrowRight, Handshake, Inbox, PlusCircle, Sprout, Edit2, Trash2 } from 'lucide-react';
+import { onValue, ref } from 'firebase/database';
+import { ArrowRight, Handshake, Inbox, PlusCircle, Sprout } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { snapshotToList } from '../../utils/database';
-import EditCropModal from '../../components/EditCropModal';
-import { useConfirm } from '../../contexts/ConfirmContext';
 
 export default function FarmerDashboard() {
   const { currentUser, userData } = useAuth();
   const [cropCount, setCropCount] = useState(0);
-  const [crops, setCrops] = useState([]);
   const [pendingDeals, setPendingDeals] = useState(0);
   const [requestCount, setRequestCount] = useState(0);
-  const [editingCrop, setEditingCrop] = useState(null);
-  const confirm = useConfirm();
 
   useEffect(() => {
     const ownCrops = onValue(ref(db, 'crops'), (snapshot) => {
       const allCrops = snapshotToList(snapshot).filter((crop) => crop.farmerId === currentUser.uid);
-      setCrops(allCrops);
       setCropCount(allCrops.length);
-    }, () => { setCropCount(0); setCrops([]); });
+    }, () => setCropCount(0));
     const ownDeals = onValue(ref(db, 'deals'), (snapshot) => setPendingDeals(snapshotToList(snapshot).filter((deal) => deal.farmerId === currentUser.uid && deal.status === 'PENDING_FARMER').length), () => setPendingDeals(0));
     const openRequests = onValue(ref(db, 'buyerRequests'), (snapshot) => setRequestCount(snapshotToList(snapshot).filter((request) => request.status === 'open').length), () => setRequestCount(0));
     return () => { ownCrops(); ownDeals(); openRequests(); };
@@ -49,54 +43,5 @@ export default function FarmerDashboard() {
       <Link to="/farmer/deals" className="group ledger-card p-6 transition hover:-translate-y-0.5 hover:border-[var(--sun-2)] hover:shadow-md"><Handshake className="h-6 w-6 text-[var(--sun-2)]" /><h2 className="mt-4 text-lg font-bold text-[var(--cream)]">Manage your deals</h2><p className="mt-1 text-sm text-[var(--muted)]">Accept offers, share contact details after confirmation, and track delivery.</p><span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-[var(--sun-2)]">View deals <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></Link>
     </section>
 
-    <section className="mt-8">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-[var(--cream)]">Your Cultivated Crops</h2>
-      </div>
-      {crops.length === 0 ? (
-        <div className="ledger-card p-8 text-center text-[var(--muted)]">
-          You haven't listed any crops yet. Click 'List a crop' to get started.
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {crops.map((crop) => (
-            <div key={crop.id} className="ledger-card p-5 hover:shadow-md transition">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-bold text-[var(--cream)] capitalize">{crop.cropName}</h3>
-                <span className={`px-2 py-1 rounded text-xs font-bold ${crop.status === 'harvested' ? 'bg-[var(--sun-2)] text-[var(--bg-1)]' : 'bg-amber-100 text-amber-900'}`}>
-                  {crop.status.replace('_', ' ')}
-                </span>
-              </div>
-              <p className="text-sm text-[var(--muted)] mb-4">{crop.quantity} {crop.unit}</p>
-              
-              <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--line)]">
-                <button
-                  onClick={() => setEditingCrop(crop)}
-                  className="flex-1 btn-success text-sm py-1.5 px-3 rounded-md transition"
-                >
-                  <Edit2 className="w-4 h-4" /> Edit
-                </button>
-                <button
-                  onClick={async () => {
-                    if (await confirm('Are you sure you want to delete this crop?')) {
-                      remove(ref(db, `crops/${crop.id}`));
-                    }
-                  }}
-                  className="flex-1 btn-danger text-sm py-1.5 px-3 rounded-md transition"
-                >
-                  <Trash2 className="w-4 h-4" /> Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
-
-    <EditCropModal 
-      isOpen={!!editingCrop} 
-      crop={editingCrop} 
-      onClose={() => setEditingCrop(null)} 
-    />
   </div>;
 }

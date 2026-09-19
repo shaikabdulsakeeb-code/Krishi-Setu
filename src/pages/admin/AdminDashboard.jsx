@@ -10,9 +10,11 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending'); // pending, approved, all
+  const [roleFilter, setRoleFilter] = useState('all');
 
   const [approvingUser, setApprovingUser] = useState(null);
   const [deletingUser, setDeletingUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // Checkbox states for approval modal
   const [verifyName, setVerifyName] = useState(false);
@@ -85,8 +87,9 @@ export default function AdminDashboard() {
   const filteredUsers = users.filter(u => {
     if (u.role === 'admin') return false;
     const userStatus = u.status || 'pending';
-    if (filter === 'all') return true;
-    return userStatus === filter;
+    const matchesStatus = filter === 'all' || userStatus === filter;
+    const matchesRole = roleFilter === 'all' || u.role === roleFilter;
+    return matchesStatus && matchesRole;
   });
 
   const canApprove = () => {
@@ -126,7 +129,8 @@ export default function AdminDashboard() {
             <h1 className="font-serif text-3xl font-bold">User Management</h1>
             <p className="text-[var(--muted)] mt-1">Approve or remove farmers and buyers.</p>
           </div>
-          <div className="flex bg-[var(--glass)] p-1 rounded-full border border-[var(--line)]">
+          <div className="flex flex-col items-start gap-3 sm:items-end">
+            <div className="flex bg-[var(--glass)] p-1 rounded-full border border-[var(--line)]">
             <button
               onClick={() => setFilter('pending')}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'pending' ? 'bg-[var(--sun-2)] text-[var(--ink)]' : 'text-[var(--muted)] hover:text-[var(--cream)]'}`}
@@ -145,6 +149,23 @@ export default function AdminDashboard() {
             >
               All Users
             </button>
+          </div>
+            <div className="flex flex-wrap gap-2" aria-label="Filter users by role">
+              {[
+                ['all', 'All roles'],
+                ['farmer', 'Farmers'],
+                ['buyer', 'Buyers'],
+              ].map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRoleFilter(value)}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${roleFilter === value ? 'border-[var(--sun-2)] bg-[var(--sun-2)] text-[var(--ink)]' : 'border-[var(--line)] text-[var(--muted)] hover:text-[var(--cream)]'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -176,7 +197,8 @@ export default function AdminDashboard() {
                     <tr 
                       key={user.id} 
                       className="hover:bg-[rgba(255,246,214,0.03)] transition-colors cursor-pointer"
-                      onClick={() => (user.status || 'pending') === 'pending' && openApproveModal(user)}
+                      onClick={() => setSelectedUser(user)}
+                      title="View user details"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -206,7 +228,7 @@ export default function AdminDashboard() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
-                        {new Date(user.createdAt).toLocaleDateString()}
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Not available'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         {(user.status || 'pending') !== 'approved' && (
@@ -232,6 +254,67 @@ export default function AdminDashboard() {
           </div>
         </div>
       </main>
+
+      {/* User Details Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in-up">
+          <div className="w-full max-w-lg overflow-hidden rounded-[20px] border border-[var(--line)] bg-[var(--bg-2)] shadow-2xl max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-[var(--line)] p-5 sm:p-6">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-[var(--sun-2)]">User details</p>
+                <h2 className="mt-1 font-serif text-xl font-bold text-[var(--cream)]">{selectedUser.name || selectedUser.email || 'User'}</h2>
+              </div>
+              <button type="button" aria-label="Close user details" onClick={() => setSelectedUser(null)} className="rounded-full p-2 text-[var(--muted)] transition hover:bg-white/10 hover:text-[var(--cream)]">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto p-5 sm:p-6">
+              <dl className="grid gap-3 sm:grid-cols-2">
+                {[
+                  ['Full name', selectedUser.name || 'Not provided'],
+                  ['Email', selectedUser.email || 'Not provided'],
+                  ['Role', selectedUser.role || 'Not provided'],
+                  ['Status', selectedUser.status || 'Pending'],
+                  ['Phone', selectedUser.phone || 'Not provided'],
+                  ['Joined', selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : 'Not available'],
+                  ['Location', selectedUser.location?.address || 'Not provided'],
+                ].map(([label, value]) => (
+                  <div key={label} className={`rounded-xl border border-[var(--line)] bg-white/5 p-3 ${label === 'Location' ? 'sm:col-span-2' : ''}`}>
+                    <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">{label}</dt>
+                    <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)] capitalize">{value}</dd>
+                  </div>
+                ))}
+                {selectedUser.role === 'farmer' && (
+                  <div className="rounded-xl border border-[var(--line)] bg-white/5 p-3 sm:col-span-2">
+                    <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Government Farmer ID</dt>
+                    <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)]">{selectedUser.governmentFarmerId || selectedUser.farmerId || 'Not provided'}</dd>
+                  </div>
+                )}
+                {selectedUser.role === 'buyer' && (
+                  <>
+                    <div className="rounded-xl border border-[var(--line)] bg-white/5 p-3">
+                      <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Trader ID</dt>
+                      <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)]">{selectedUser.traderId || 'Not provided'}</dd>
+                    </div>
+                    <div className="rounded-xl border border-[var(--line)] bg-white/5 p-3">
+                      <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Business License</dt>
+                      <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)]">{selectedUser.businessLicenseNumber || selectedUser.businessLicense || 'Not provided'}</dd>
+                    </div>
+                  </>
+                )}
+              </dl>
+            </div>
+
+            <div className="flex flex-col-reverse gap-3 border-t border-[var(--line)] bg-[var(--bg-1)] p-5 sm:flex-row sm:justify-end sm:p-6">
+              <button type="button" onClick={() => setSelectedUser(null)} className="rounded-full px-5 py-2.5 text-sm font-semibold text-[var(--cream)] transition hover:bg-white/5">Close</button>
+              {(selectedUser.status || 'pending') !== 'approved' && (
+                <button type="button" onClick={() => { setSelectedUser(null); openApproveModal(selectedUser); }} className="btn-success rounded-full px-5 py-2.5 text-sm">Review & Approve</button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Approval Modal */}
       {approvingUser && (
@@ -267,7 +350,7 @@ export default function AdminDashboard() {
                   <input type="checkbox" checked={verifyId1} onChange={(e) => setVerifyId1(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
                   <div>
                     <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Farmer ID</div>
-                    <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.farmerId || 'Not provided'}</div>
+                      <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.governmentFarmerId || approvingUser.farmerId || 'Not provided'}</div>
                   </div>
                 </label>
               )}
@@ -285,7 +368,7 @@ export default function AdminDashboard() {
                     <input type="checkbox" checked={verifyId2} onChange={(e) => setVerifyId2(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
                     <div>
                       <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Business License</div>
-                      <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.businessLicense || 'Not provided'}</div>
+                      <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.businessLicenseNumber || approvingUser.businessLicense || 'Not provided'}</div>
                     </div>
                   </label>
                 </>

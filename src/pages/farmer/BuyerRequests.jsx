@@ -165,11 +165,11 @@ export default function BuyerRequests() {
                   {req.transport && (
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm text-gray-600">
-                        <span>Transport ({req.transport.distanceKm}km {req.transport.mode})</span>
+                        <span>Expected Transport ({req.transport.distanceKm}km {req.transport.mode})</span>
                         <span className="text-red-500 font-medium">- ₹{req.transport.transportCharge}</span>
                       </div>
                       <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-200">
-                        <span className="text-gray-900">Your Net Value</span>
+                        <span className="text-gray-900">Expected Net Value</span>
                         <span className="text-[#3a674f] text-lg">₹{req.netValue}</span>
                       </div>
                     </div>
@@ -182,7 +182,7 @@ export default function BuyerRequests() {
 
                   {!req.transport && (
                     <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700 border border-amber-100">
-                      Transport charge will appear after both buyer and farmer locations are saved.
+                      Expected transport cost will appear after both buyer and farmer locations are saved.
                     </p>
                   )}
                 </div>

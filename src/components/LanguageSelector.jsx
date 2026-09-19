@@ -1,25 +1,40 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Globe } from 'lucide-react';
 
-export default function LanguageSelector() {
-  const [currentLang, setCurrentLang] = useState('en');
+function getSavedLanguage() {
+  if (typeof document === 'undefined') return 'en';
+  const match = document.cookie.match(/(?:^|;\s*)googtrans=\/en\/([^;]+)/);
+  return match && ['hi', 'te'].includes(match[1]) ? match[1] : 'en';
+}
 
-  // Listen for language changes if needed or just handle the select change
+function clearTranslationCookies() {
+  const expiredCookie = 'googtrans=; path=/; max-age=0; SameSite=Lax';
+  document.cookie = expiredCookie;
+  const host = window.location.hostname;
+  if (host && host !== 'localhost') {
+    document.cookie = `${expiredCookie}; domain=${host}`;
+    document.cookie = `${expiredCookie}; domain=.${host}`;
+  }
+}
+
+export default function LanguageSelector() {
+  const [currentLang, setCurrentLang] = useState(getSavedLanguage);
+
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setCurrentLang(lang);
-    
-    const gtSelect = document.querySelector('.goog-te-combo');
-    if (gtSelect) {
-      gtSelect.value = lang;
-      gtSelect.dispatchEvent(new Event('change'));
-    } else {
-      // Fallback: Set cookie and reload
-      const transCookie = lang === 'en' ? '/en/en' : `/en/${lang}`;
-      document.cookie = `googtrans=${transCookie}; path=/`;
-      document.cookie = `googtrans=${transCookie}; path=/; domain=${window.location.hostname}`;
-      window.location.reload();
+
+    // Reloading ensures Google Translate restores the original page when English
+    // is selected; changing only the hidden widget leaves translated DOM in place.
+    clearTranslationCookies();
+    if (lang !== 'en') {
+      document.cookie = `googtrans=/en/${lang}; path=/; SameSite=Lax`;
+      const host = window.location.hostname;
+      if (host && host !== 'localhost') {
+        document.cookie = `googtrans=/en/${lang}; path=/; domain=${host}; SameSite=Lax`;
+      }
     }
+    window.location.reload();
   };
 
   return (

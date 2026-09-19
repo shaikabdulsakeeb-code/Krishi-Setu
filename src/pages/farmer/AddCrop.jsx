@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { push, ref, set } from 'firebase/database';
-import { useNavigate } from 'react-router-dom';
+import { onValue, push, ref, remove, set } from 'firebase/database';
 import { geocodeAddress } from '../../utils/transport';
+import { snapshotToList } from '../../utils/database';
+import EditCropModal from '../../components/EditCropModal';
+import { useConfirm } from '../../contexts/ConfirmContext';
+import { Edit2, Trash2 } from 'lucide-react';
 
 export default function AddCrop() {
   const { currentUser, userData } = useAuth();
-  const navigate = useNavigate();
+  const confirm = useConfirm();
 
   const [cropName, setCropName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -20,6 +23,15 @@ export default function AddCrop() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [crops, setCrops] = useState([]);
+  const [editingCrop, setEditingCrop] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onValue(ref(db, 'crops'), (snapshot) => {
+      setCrops(snapshotToList(snapshot).filter((crop) => crop.farmerId === currentUser.uid));
+    }, () => setCrops([]));
+    return () => unsubscribe();
+  }, [currentUser.uid]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -55,7 +67,10 @@ export default function AddCrop() {
       const cropRef = push(ref(db, 'crops'));
       await set(cropRef, cropData);
       setSuccess('Crop listed successfully!');
-      setTimeout(() => navigate('/farmer/dashboard'), 2000);
+      setCropName('');
+      setQuantity('');
+      setEstimatedHarvestDate('');
+      setDeliveryDate('');
       
     } catch (err) {
       setError('Failed to add crop: ' + err.message);
@@ -65,10 +80,12 @@ export default function AddCrop() {
   }
 
   return (
-    <div className="ledger-card max-w-2xl mx-auto p-6 sm:p-8">
-      <h2 className="text-headline-lg mb-6">List a New Crop</h2>
+    <div className="space-y-8">
+      <div className="ledger-card max-w-2xl mx-auto p-6 sm:p-8">
+        <h2 className="text-headline-lg mb-2">List a New Crop</h2>
+        <p className="mb-6 text-sm text-[var(--muted)]">Your listed crops appear below and can be updated or removed here.</p>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
         {error && <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm font-medium">{error}</div>}
         {success && <div className="bg-green-50 text-green-700 p-3 rounded-md text-sm font-medium">{success}</div>}
 
@@ -185,7 +202,60 @@ export default function AddCrop() {
             {loading ? 'Submitting...' : 'List Crop'}
           </button>
         </div>
-      </form>
+        </form>
+      </div>
+
+      <section className="max-w-5xl mx-auto">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-headline-md">Your listed crops</h2>
+            <p className="mt-1 text-sm text-[var(--muted)]">{crops.length} crop{crops.length === 1 ? '' : 's'} listed</p>
+          </div>
+        </div>
+
+        {crops.length === 0 ? (
+          <div className="ledger-card p-8 text-center text-[var(--muted)]">
+            You have not listed any crops yet. Add your first crop using the form above.
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {crops.map((crop) => (
+              <article key={crop.id} className="ledger-card p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold capitalize text-[var(--cream)]">{crop.cropName}</h3>
+                    <p className="mt-1 text-sm text-[var(--muted)]">{crop.quantity} {crop.unit}</p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold capitalize ${crop.status === 'harvested' ? 'bg-[var(--sun-2)] text-[var(--bg-1)]' : 'bg-amber-100 text-amber-900'}`}>
+                    {crop.status.replace('_', ' ')}
+                  </span>
+                </div>
+                <p className="mt-4 text-xs text-[var(--muted)]">
+                  {crop.status === 'harvested' ? `Delivery: ${crop.deliveryDate || 'Not set'}` : `Estimated harvest: ${crop.estimatedHarvestDate || 'Not set'}`}
+                </p>
+                <div className="mt-4 flex gap-2 border-t border-[var(--line)] pt-4">
+                  <button type="button" onClick={() => setEditingCrop(crop)} className="btn-success flex-1 px-3 py-2 text-sm">
+                    <Edit2 className="h-4 w-4" /> Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (await confirm(`Remove ${crop.cropName} from your crop listings?`)) {
+                        await remove(ref(db, `crops/${crop.id}`));
+                      }
+                    }}
+                    className="btn-danger flex-1 px-3 py-2 text-sm"
+                  >
+                    <Trash2 className="h-4 w-4" /> Delete
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <EditCropModal isOpen={Boolean(editingCrop)} crop={editingCrop} onClose={() => setEditingCrop(null)} />
     </div>
   );
 }
