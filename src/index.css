@@ -42,30 +42,39 @@
   --color-background: #fff8f0;
   --color-on-background: #1e1b14;
   
-  /* Additional specific design colors */
-  --color-sativa-green: #1F4D36;
-  --color-sativa-green-hover: #163A29;
-  --color-sativa-green-tint: #E4EFE7;
+  /* New Theme Colors */
+  --bg-1: #0F2E1F;
+  --bg-2: #1F4D36;
+  --bg-3: #2F6B3F;
+  --band: #245A3D;
+  --sun: #F5B700;
+  --sun-2: #FFD84D;
+  --seed: #4A2C12;
+  --cream: #FFF6D6;
+  --ink: #12301F;
+  --muted: rgba(255,246,214,0.76);
+  --glass: rgba(255,246,214,0.09);
+  --line: rgba(255,246,214,0.2);
+
+  /* Mapping for existing custom utilities if needed */
+  --color-sativa-green: var(--bg-2);
+  --color-sativa-green-hover: var(--bg-3);
+  --color-sativa-green-tint: var(--bg-1);
   
-  --color-turmeric-gold: #E2A63B;
-  --color-turmeric-gold-hover: #C98A1D;
-  --color-turmeric-gold-tint: #FBEBC9;
+  --color-turmeric-gold: var(--sun);
+  --color-turmeric-gold-hover: var(--sun-2);
+  --color-turmeric-gold-tint: rgba(245, 183, 0, 0.1);
   
   --color-clay: #B6472F;
   --color-clay-tint: #F6E1DA;
-  
-  --color-indigo: #3B4B76;
-  --color-indigo-tint: #E7E9F1;
-  
-  --color-ink: #232019;
-  --color-ink-soft: #6B6355;
-  
-  --color-paper-canvas: #F8F3E6;
-  --color-surface-sheet: #FFFDF8;
-  --color-hairline: #E7E1D2;
 
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Newsreader", ui-serif, Georgia, serif;
+  --color-ink-soft: var(--muted);
+  --color-paper-canvas: var(--bg-1);
+  --color-surface-sheet: var(--bg-1);
+  --color-hairline: var(--line);
+
+  --font-sans: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
   
   --radius-sm: 0.25rem;
   --radius-md: 0.75rem;
@@ -149,10 +158,22 @@
   }
 
   body {
-    background-color: var(--color-paper-canvas);
-    color: var(--color-ink);
+    background-color: var(--bg-1);
+    background-image:
+      radial-gradient(900px 600px at 85% -5%, rgba(245,183,0,0.16), transparent 60%),
+      linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 60%, #0A2115 100%);
+    color: var(--cream);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  .form-input:required:invalid {
+    border-color: var(--color-clay);
+    box-shadow: inset 0 0 0 1px var(--color-clay);
+  }
+  
+  .form-input:required {
+    border-color: rgba(182, 71, 47, 0.4);
   }
 
   button, input, select, textarea {
@@ -289,10 +310,12 @@
 
   /* Component Wrappers */
   .ledger-card {
-    background-color: var(--color-surface-sheet);
-    border: 1px solid var(--color-hairline);
+    background-color: var(--glass);
+    border: 1px solid var(--line);
     border-radius: var(--radius-ledger);
-    box-shadow: none !important; /* Force no shadow */
+    backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.28) !important;
+    color: var(--cream);
   }
 
   .ledger-divider {
@@ -314,10 +337,10 @@
 
   /* Inputs */
   .form-input {
-    background-color: var(--color-surface-sheet);
-    border: 1.5px solid var(--color-hairline);
+    background-color: rgba(255,246,214,0.05);
+    border: 1.5px solid var(--line);
     border-radius: var(--radius-input);
-    color: var(--color-ink);
+    color: var(--cream);
     font-family: var(--font-sans);
     font-size: 15px; /* body-md */
     font-weight: 400;
@@ -326,9 +349,9 @@
     box-shadow: none !important;
   }
   .form-input:focus {
-    border-color: var(--color-sativa-green);
+    border-color: var(--sun-2);
     outline: none;
-    box-shadow: none !important;
+    box-shadow: 0 0 0 2px rgba(255,216,77,0.2) !important;
   }
   .form-input-suffix {
     color: var(--color-ink-soft);
@@ -337,8 +360,8 @@
 
   /* Buttons */
   .btn-primary {
-    background-color: var(--color-turmeric-gold);
-    color: var(--color-ink);
+    background: linear-gradient(135deg, var(--sun-2), var(--sun));
+    color: var(--ink);
     border: none;
     border-radius: var(--radius-btn);
     padding: 14px 24px;

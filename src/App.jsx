@@ -9,6 +9,8 @@ import { ConfirmProvider } from './contexts/ConfirmContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import CompleteProfile from './pages/CompleteProfile';
+import PendingApproval from './pages/PendingApproval';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import FarmerLayout from './pages/farmer/FarmerLayout';
 import FarmerDashboard from './pages/farmer/FarmerDashboard';
 import AddCrop from './pages/farmer/AddCrop';
@@ -32,14 +34,24 @@ function ProtectedRoute({ children, role }) {
   const { currentUser, userData, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+  if (loading) return <div className="h-screen flex items-center justify-center bg-[var(--bg-1)] text-[var(--cream)] font-serif text-2xl">Loading...</div>;
   if (!currentUser) return <Navigate to="/login" />;
   
   if (role && userData?.role !== role) {
     return <Navigate to="/" />; // Redirect if wrong role
   }
 
-  if (role && userData && !isProfileReady(userData) && !location.pathname.endsWith('/profile')) {
+  // Admin users bypass pending check and profile check
+  if (userData?.role === 'admin') {
+    return children;
+  }
+
+  // Check for pending status
+  if (userData?.status !== 'approved' && location.pathname !== '/pending') {
+    return <Navigate to="/pending" replace />;
+  }
+
+  if (role && userData && !isProfileReady(userData) && !location.pathname.endsWith('/profile') && location.pathname !== '/pending') {
     return <Navigate to={`/${userData.role}/profile`} replace />;
   }
 
@@ -55,6 +67,16 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/pending" element={
+            <ProtectedRoute>
+              <PendingApproval />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute role="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
           
           <Route path="/complete-profile" element={
             <ProtectedRoute>

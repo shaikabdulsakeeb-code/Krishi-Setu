@@ -3,7 +3,8 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import VoiceAgent from '../../components/VoiceAgent';
 import LanguageSelector from '../../components/LanguageSelector';
-import { Sprout, LayoutDashboard, Search, Handshake, LogOut, UserCircle, ClipboardList, Menu, X } from 'lucide-react';
+import Logo from '../../components/Logo';
+import { LayoutDashboard, Search, Handshake, LogOut, UserCircle, ClipboardList, Menu, X } from 'lucide-react';
 import TeluguWordHelper from '../../components/TeluguWordHelper';
 
 export default function BuyerLayout() {
@@ -22,7 +23,7 @@ export default function BuyerLayout() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-[#1e1b14]">
       {/* Top Nav */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-20">
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-20 rounded-b-2xl shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -36,8 +37,8 @@ export default function BuyerLayout() {
               </button>
               
               <div className="flex-shrink-0 flex items-center">
-                <Sprout className="h-8 w-8 text-[#3a674f]" />
-                <span className="ml-2 text-xl font-bold font-serif text-[#033621]">Krishi Setu</span>
+                <Logo className="w-8 h-8" />
+                <span className="ml-2 text-xl font-bold font-serif text-[var(--bg-2)]">Krishi Setu</span>
               </div>
               <div className="hidden sm:-my-px sm:ml-8 sm:flex sm:space-x-8">
                 {navItems.map((item) => {

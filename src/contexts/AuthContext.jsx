@@ -38,11 +38,13 @@ export function AuthProvider({ children }) {
   }
 
   function buildStarterProfile(user, role) {
+    const isAdmin = user.email === 'keebo.platform@gmail.com';
     return {
       email: user.email,
       name: user.displayName || user.email?.split('@')[0] || 'Krishi Setu user',
       profilePic: user.photoURL || '',
-      role,
+      role: isAdmin ? 'admin' : role,
+      status: isAdmin ? 'approved' : 'pending',
       createdAt: new Date().toISOString(),
       profileCompleted: false,
     };
