@@ -4,26 +4,26 @@ import { useAuth } from '../../hooks/useAuth';
 import VoiceAgent from '../../components/VoiceAgent';
 import LanguageSelector from '../../components/LanguageSelector';
 import Logo from '../../components/Logo';
-import { LayoutDashboard, Search, Handshake, LogOut, UserCircle, ClipboardList, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Search, Handshake, LogOut, UserCircle, ClipboardList, Menu, X, ChevronDown } from 'lucide-react';
 import TeluguWordHelper from '../../components/TeluguWordHelper';
 
 export default function BuyerLayout() {
   const { logout, profileIssue } = useAuth();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const navItems = [
     { name: 'Dashboard', path: '/buyer/dashboard', icon: LayoutDashboard },
     { name: 'Browse Crops', path: '/buyer/browse', icon: Search },
     { name: 'Requests', path: '/buyer/requests', icon: ClipboardList },
     { name: 'My Deals', path: '/buyer/deals', icon: Handshake },
-    { name: 'Profile', path: '/buyer/profile', icon: UserCircle },
   ];
 
   return (
     <div className="app-shell min-h-screen flex flex-col font-sans text-[var(--cream)]">
       {/* Top Nav */}
-      <nav className="bg-[rgba(11,42,32,0.92)] backdrop-blur-md border-b border-[var(--line)] sticky top-0 z-20 shadow-sm">
+      <nav className="bg-[color-mix(in_srgb,var(--bg-card)_94%,transparent)] backdrop-blur-md border-b border-[var(--border)] sticky top-0 z-20 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between gap-3 h-16">
             <div className="flex min-w-0 items-center">
@@ -51,9 +51,9 @@ export default function BuyerLayout() {
                       to={item.path}
                       className={`${
                         isActive
-                          ? 'border-[var(--sun-2)] text-[var(--sun-2)]'
-                          : 'border-transparent text-[var(--muted)] hover:border-[var(--line)] hover:text-[var(--cream)]'
-                      } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors`}
+                          ? 'bg-[var(--bg-card-alt)] text-[var(--primary)] font-bold'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-alt)] hover:text-[var(--primary)]'
+                      } inline-flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors`}
                     >
                       <Icon className="w-4 h-4 mr-2" />
                       {item.name}
@@ -62,20 +62,19 @@ export default function BuyerLayout() {
                 })}
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2 lg:gap-3">
-              <div className="hidden lg:flex lg:items-center lg:gap-3">
-                <LanguageSelector />
-                <VoiceAgent />
-                <TeluguWordHelper />
-              </div>
-              <button
-                onClick={logout}
-                aria-label="Sign out"
-                className="inline-flex items-center px-2.5 sm:px-3 py-2 border border-[var(--line)] rounded-full text-sm font-medium text-[#ffb4a8] hover:bg-[var(--glass)] transition-colors"
-              >
-                <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Sign out</span>
+            <div className="relative flex shrink-0 items-center gap-2">
+              <button onClick={() => setAccountMenuOpen((open) => !open)} aria-expanded={accountMenuOpen} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 text-sm font-semibold text-[var(--primary-dark)] hover:bg-[var(--bg-card-alt)]">
+                <UserCircle className="h-5 w-5 text-[var(--primary)]" />
+                <span className="hidden sm:inline">Account</span><ChevronDown className="h-4 w-4" />
               </button>
+              {accountMenuOpen && (
+                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3 shadow-lg">
+                  <div className="border-b border-[var(--border)] pb-3"><LanguageSelector /></div>
+                  <div className="flex items-center justify-between gap-2 py-3"><VoiceAgent /><TeluguWordHelper /></div>
+                  <Link to="/buyer/profile" onClick={() => setAccountMenuOpen(false)} className="flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-card-alt)]"><UserCircle className="h-4 w-4" /> Profile</Link>
+                  <button onClick={logout} className="mt-1 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--danger)] hover:bg-red-50"><LogOut className="h-4 w-4" /> Sign out</button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -106,19 +105,20 @@ export default function BuyerLayout() {
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`${
-                      isActive ? 'bg-[var(--glass)] text-[var(--sun-2)] font-bold' : 'text-[var(--cream)] hover:bg-[var(--glass)]'
+                      isActive ? 'bg-[var(--bg-card-alt)] text-[var(--primary)] font-bold' : 'text-[var(--text-primary)] hover:bg-[var(--bg-card-alt)]'
                     } group flex items-center px-2 py-3 text-base font-medium rounded-md`}
                   >
-                    <Icon className={`${isActive ? 'text-[var(--sun-2)]' : 'text-[var(--muted)] group-hover:text-[var(--cream)]'} mr-4 h-6 w-6`} />
+                    <Icon className={`${isActive ? 'text-[var(--primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--primary)]'} mr-4 h-6 w-6`} />
                     {item.name}
                   </Link>
                 );
               })}
             </div>
-            <div className="border-t border-[var(--line)] p-4 space-y-3">
+            <div className="border-t border-[var(--border)] p-4 space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Tools</p>
               <div className="flex items-center justify-between gap-3"><LanguageSelector /><VoiceAgent /></div>
               <div><TeluguWordHelper /></div>
+              <Link to="/buyer/profile" onClick={() => setMobileMenuOpen(false)} className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-[var(--primary)]"><UserCircle className="h-4 w-4" /> Profile</Link>
             </div>
           </div>
         </div>

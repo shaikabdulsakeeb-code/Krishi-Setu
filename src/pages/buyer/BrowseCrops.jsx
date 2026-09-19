@@ -180,13 +180,13 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
         <nav className="-mb-px flex gap-4 overflow-x-auto sm:gap-8">
           <button
             onClick={() => setActiveTab('browse')}
-            className={`${activeTab === 'browse' ? 'border-[var(--sun-2)] text-[var(--sun-2)]' : 'border-transparent text-[var(--muted)] hover:text-[var(--cream)] hover:border-[var(--line)]'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            className={`${activeTab === 'browse' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-[var(--muted)] hover:text-[var(--cream)] hover:border-[var(--line)]'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Browse Farmers' Crops
           </button>
           <button
             onClick={() => setActiveTab('request')}
-            className={`${activeTab === 'request' ? 'border-[var(--sun-2)] text-[var(--sun-2)]' : 'border-transparent text-[var(--muted)] hover:text-[var(--cream)] hover:border-[var(--line)]'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            className={`${activeTab === 'request' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-[var(--muted)] hover:text-[var(--cream)] hover:border-[var(--line)]'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Post a General Request
           </button>
@@ -207,7 +207,7 @@ export default function BrowseCrops({ initialTab = 'browse' }) {
                 <div 
                   key={crop.id} 
                   onClick={() => { setSelectedCrop(crop); setCalculatedTransport(null); }}
-                  className={`ledger-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative group overflow-hidden ${selectedCrop?.id === crop.id ? 'border-[var(--sun-2)] ring-2 ring-[var(--sun-2)]/20' : 'hover:border-[var(--sun-2)]'}`}
+                  className={`ledger-card rounded-2xl p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative group overflow-hidden ${selectedCrop?.id === crop.id ? 'border-[var(--primary)] ring-2 ring-[var(--primary)]/20' : 'hover:border-[var(--primary)]'}`}
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full -z-10 group-hover:scale-125 transition-transform duration-500"></div>
                   <div className="flex justify-between items-start mb-3">

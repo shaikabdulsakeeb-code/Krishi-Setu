@@ -3,9 +3,33 @@ import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { get, onValue, push, ref, set, update } from 'firebase/database';
 import { calculateTransportCost } from '../../utils/transport';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { snapshotToList } from '../../utils/database';
 import { useConfirm } from '../../contexts/ConfirmContext';
+
+const CROP_MARKS = {
+  onion: '🧅', tomato: '🍅', chilli: '🌶️', chili: '🌶️', potato: '🥔',
+  rice: '🌾', paddy: '🌾', wheat: '🌾', maize: '🌽', corn: '🌽',
+  banana: '🍌', mango: '🥭', coconut: '🥥', carrot: '🥕',
+};
+
+function cropMark(cropName = '') {
+  const match = Object.keys(CROP_MARKS).find((crop) => cropName.toLowerCase().includes(crop));
+  return match ? CROP_MARKS[match] : '🌿';
+}
+
+function locationLabel(location) {
+  const address = location?.address?.trim();
+  if (!address || address.toLowerCase() === 'captured via gps') return 'Location saved';
+  const parts = address.split(',').map((part) => part.trim()).filter(Boolean);
+  if (parts.length > 2 && /india$/i.test(parts.at(-1))) parts.pop();
+  return parts.length > 1 ? parts.slice(-2).join(', ') : parts[0];
+}
+
+function locationDetail(location) {
+  if (location?.lat && location?.lng) return `${Number(location.lat).toFixed(5)}, ${Number(location.lng).toFixed(5)}`;
+  return location?.address === 'Captured via GPS' ? 'Captured via GPS' : '';
+}
 
 export default function BuyerRequests() {
   const { currentUser, userData } = useAuth();
@@ -137,14 +161,14 @@ export default function BuyerRequests() {
             const canOffer = hasMatchingCrop && Boolean(req.transport);
             
             return (
-              <div key={req.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col hover:-translate-y-1 hover:shadow-lg transition-all duration-300 overflow-hidden relative group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-50 to-emerald-50 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="p-6 border-b border-gray-50">
+              <article key={req.id} className="ledger-card flex flex-col overflow-hidden transition-shadow hover:shadow-md">
+                <div className="border-b border-[var(--border)] bg-[var(--bg-card-alt)] p-5">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-bold text-gray-900 capitalize flex items-center gap-2">
-                      <span className="text-2xl">🌾</span> {req.cropName}
-                    </h3>
-                    <span className="bg-[#e4efe7] text-[#033621] text-xs px-3 py-1.5 rounded-full font-bold shadow-sm">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-[var(--bg-card)] text-3xl shadow-sm" aria-hidden="true">{cropMark(req.cropName)}</span>
+                      <h3 className="min-w-0 text-lg font-semibold text-[var(--primary-dark)] capitalize leading-tight">{req.cropName}</h3>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs font-bold text-[var(--primary-dark)]">
                       {req.quantity} kg
                     </span>
                   </div>
@@ -156,28 +180,34 @@ export default function BuyerRequests() {
                   </div>
                 </div>
                 
-                <div className="p-6 space-y-4 flex-grow bg-gray-50/30">
-                  <div className="flex justify-between items-center text-sm bg-white p-3 rounded-lg shadow-sm border border-gray-100">
-                    <span className="text-gray-500 font-medium">Offered Price</span>
-                    <span className="font-bold text-lg text-[#033621]">₹{req.pricePerUnit}<span className="text-xs text-gray-500 font-normal">/kg</span></span>
+                <div className="flex-grow space-y-4 p-5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-[var(--text-secondary)]">Offered Price</span>
+                    <span className="text-lg font-bold text-[var(--accent-gold)]">₹{req.pricePerUnit}<span className="text-xs font-normal text-[var(--text-secondary)]">/kg</span></span>
                   </div>
 
                   {req.transport && (
                     <div className="space-y-2">
-                      <div className="flex justify-between text-sm text-gray-600">
+                      <div className="flex justify-between gap-3 text-sm text-[var(--text-secondary)]">
                         <span>Expected Transport ({req.transport.distanceKm}km {req.transport.mode})</span>
-                        <span className="text-red-500 font-medium">- ₹{req.transport.transportCharge}</span>
+                        <span className="shrink-0 font-medium text-[var(--danger)]">- ₹{req.transport.transportCharge}</span>
                       </div>
-                      <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-200">
-                        <span className="text-gray-900">Expected Net Value</span>
-                        <span className="text-[#3a674f] text-lg">₹{req.netValue}</span>
+                      <div className={`flex items-end justify-between gap-3 rounded-xl px-4 py-3 ${Number(req.netValue) >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
+                        <div>
+                          <span className="block text-sm font-semibold text-[var(--text-primary)]">Expected Net Value</span>
+                          <span className="mt-1 block text-xs text-[var(--text-secondary)]">{Number(req.netValue) >= 0 ? '✓ Good deal estimate' : '⚠ Low margin estimate'}</span>
+                        </div>
+                        <span className={`shrink-0 text-[22px] leading-none font-bold ${Number(req.netValue) >= 0 ? 'text-green-700' : 'text-red-700'}`}>₹{req.netValue}</span>
                       </div>
                     </div>
                   )}
                   
-                  <div className="flex items-start gap-2 text-xs text-gray-500 mt-2 bg-blue-50/50 p-2 rounded-md">
-                    <span className="text-blue-500 mt-0.5">📍</span> 
-                    <span className="line-clamp-2">{req.deliveryLocation?.address || 'Delivery location not available'}</span>
+                  <div className="flex items-start gap-2 border-t border-[var(--border)] pt-3 text-sm text-[var(--text-secondary)]" title={locationDetail(req.deliveryLocation)}>
+                    <span className="mt-0.5" aria-hidden="true">📍</span>
+                    <div className="min-w-0">
+                      <span className="block truncate font-medium text-[var(--text-primary)]">{locationLabel(req.deliveryLocation)}</span>
+                      {locationDetail(req.deliveryLocation) && <span className="mt-0.5 block text-xs">{locationDetail(req.deliveryLocation) === 'Captured via GPS' ? 'Captured via GPS' : 'GPS location available'}</span>}
+                    </div>
                   </div>
 
                   {!req.transport && (
@@ -187,21 +217,25 @@ export default function BuyerRequests() {
                   )}
                 </div>
 
-                <div className="p-4 bg-white border-t border-gray-50">
+                <div className="border-t border-[var(--border)] bg-[var(--bg-card-alt)] p-4">
+                  {!hasMatchingCrop ? (
+                    <Link to="/farmer/add-crop" className="btn-secondary w-full px-4 py-2.5 text-sm">No matching crop — Add this crop</Link>
+                  ) : (
                   <button
                     onClick={() => handleAddToDeal(req)}
                     disabled={processingId === req.id || !canOffer}
-                    className={`w-full py-2.5 px-4 rounded-xl text-sm transition-all duration-200
+                    className={`w-full py-2.5 px-4 rounded-lg text-sm transition-all duration-200
                       ${canOffer 
                         ? 'btn-primary' 
-                        : 'bg-gray-100 text-gray-400 cursor-not-allowed font-bold'
+                        : 'border border-[var(--text-secondary)] bg-transparent text-[var(--text-secondary)] cursor-not-allowed font-semibold'
                       } focus:outline-none`}
-                    title={!hasMatchingCrop ? "You don't have this crop listed." : (!req.transport ? 'A saved farmer and buyer location is required.' : '')}
+                    title={!req.transport ? 'A saved farmer and buyer location is required.' : ''}
                   >
-                    {processingId === req.id ? 'Processing...' : (canOffer ? 'Offer Deal' : (!hasMatchingCrop ? 'No Matching Crop' : 'Location Required'))}
+                    {processingId === req.id ? 'Processing...' : (canOffer ? 'Offer Deal' : 'Location Required')}
                   </button>
+                  )}
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>

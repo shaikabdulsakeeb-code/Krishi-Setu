@@ -29,20 +29,19 @@ export default function Home() {
 
   return (
     <div className="app-shell min-h-screen bg-transparent text-[var(--cream)] font-sans">
-      <nav className="fixed inset-x-0 top-0 z-50 py-4 transition-all duration-300 bg-[rgba(15,46,31,0.78)] backdrop-blur-md border-b border-[var(--line)]">
+      <nav className="fixed inset-x-0 top-0 z-50 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-card)_94%,transparent)] py-4 shadow-sm backdrop-blur-md transition-all duration-300">
         <div className="max-w-[1180px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)] mx-auto flex items-center justify-between gap-3">
           <Link to="/" className="flex shrink-0 items-center gap-2 text-[1.15rem] sm:text-[1.35rem] font-bold font-serif no-underline tracking-wide">
             <Logo className="w-[34px] h-[34px]" />
             Krishi Setu
           </Link>
           <ul className="hidden lg:flex gap-7 list-none m-0 p-0">
-            <li><a href="#how" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--sun-2)] transition-colors">How it works</a></li>
-            <li><a href="#join" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--sun-2)] transition-colors">Farmers and buyers</a></li>
-            <li><a href="#why" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--sun-2)] transition-colors">Why Krishi Setu</a></li>
+            <li><a href="#how" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--primary)] transition-colors">How it works</a></li>
+            <li><a href="#join" className="text-[var(--muted)] font-medium text-[0.98rem] hover:text-[var(--primary)] transition-colors">Farmers and buyers</a></li>
           </ul>
           <div className="flex items-center gap-2.5">
-            <Link to="/login" className="text-[var(--muted)] hover:text-[var(--sun-2)] transition-colors font-medium px-3 py-2 hidden lg:block">Log in</Link>
-            <Link to="/register" className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 rounded-full font-sans font-semibold text-sm sm:text-base no-underline cursor-pointer border-2 border-transparent transition-all duration-200 bg-gradient-to-br from-[var(--sun-2)] to-[var(--sun)] text-[var(--ink)] shadow-[0_8px_24px_rgba(245,183,0,0.3)] hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(245,183,0,0.45)]">
+            <Link to="/login" className="text-[var(--muted)] hover:text-[var(--primary)] transition-colors font-medium px-3 py-2 hidden lg:block">Log in</Link>
+            <Link to="/register" className="btn-primary px-4 sm:px-6 py-2 text-sm sm:text-base no-underline">
               Join now
             </Link>
           </div>
@@ -59,22 +58,22 @@ export default function Home() {
             <div className="animate-fade-in-up">
               <h1 className="font-serif font-black text-[clamp(2.6rem,6.2vw,5rem)] leading-[1.02] tracking-[-0.02em]">
                 Sell your harvest.
-                <span className="block text-[var(--sun-2)]">Buy it straight from the field.</span>
+                <span className="block text-[var(--primary)]">Buy it straight from the field.</span>
               </h1>
               <p className="mt-[1.4rem] max-w-[34rem] text-[1.18rem] text-[var(--muted)]">
                 Krishi Setu connects farmers and buyers for crop deals where the price, quantity and terms are visible to both sides.
               </p>
               <div className="mt-8 flex flex-wrap gap-[0.9rem]">
-                <Link to="/register" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-sans font-semibold text-base no-underline cursor-pointer border-2 border-transparent transition-all duration-200 bg-gradient-to-br from-[var(--sun-2)] to-[var(--sun)] text-[var(--ink)] shadow-[0_8px_24px_rgba(245,183,0,0.3)] hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(245,183,0,0.45)]">
+                <Link to="/register" className="btn-primary px-6 py-3 text-base no-underline">
                   Get started
                 </Link>
-                <a href="#how" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-sans font-semibold text-base no-underline cursor-pointer border-2 border-[var(--line)] bg-transparent text-[var(--cream)] transition-all duration-200 hover:border-[var(--sun-2)] hover:text-[var(--sun-2)]">
+                <a href="#how" className="btn-secondary px-6 py-3 text-base no-underline">
                   See how it works
                 </a>
               </div>
             </div>
             <div className="flex justify-start lg:justify-end lg:self-end animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="w-[min(380px,100%)] rounded-[26px] p-[1.3rem_1.4rem] bg-[var(--glass)] border border-[var(--line)] backdrop-blur-[16px] saturate-[140%] shadow-[0_24px_60px_rgba(0,0,0,0.28)]" role="group" aria-label="Sample deal board">
+              <div className="w-[min(380px,100%)] ledger-card rounded-[26px] p-[1.3rem_1.4rem]" role="group" aria-label="Sample deal board">
                 <h2 className="font-serif text-[1.15rem] font-bold flex justify-between items-baseline gap-4">
                   Today on the board <small className="font-sans font-medium text-[0.78rem] text-[var(--muted)]">Sample data</small>
                 </h2>
@@ -106,22 +105,22 @@ export default function Home() {
             <ol className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 list-none relative">
               <div className="hidden lg:block absolute left-[8%] right-[8%] top-[27px] h-[2px] bg-[repeating-linear-gradient(90deg,var(--sun)_0_10px,transparent_10px_20px)] opacity-55"></div>
               <li className="relative">
-                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--sun)] text-[var(--ink)] font-serif font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">1</div>
+                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--primary)] text-white font-sans font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">1</div>
                 <h3 className="mt-5 font-serif text-[1.3rem] font-bold">Post your crop</h3>
                 <p className="mt-2 text-[var(--muted)]">Farmers add the crop, variety, quantity, location and the price they expect.</p>
               </li>
               <li className="relative">
-                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--sun)] text-[var(--ink)] font-serif font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">2</div>
+                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--primary)] text-white font-sans font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">2</div>
                 <h3 className="mt-5 font-serif text-[1.3rem] font-bold">Buyers compare</h3>
                 <p className="mt-2 text-[var(--muted)]">Buyers search the board and shortlist crops that match what they need.</p>
               </li>
               <li className="relative">
-                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--sun)] text-[var(--ink)] font-serif font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">3</div>
+                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--primary)] text-white font-sans font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">3</div>
                 <h3 className="mt-5 font-serif text-[1.3rem] font-bold">Agree the terms</h3>
                 <p className="mt-2 text-[var(--muted)]">Both sides settle price, quantity and delivery in one place.</p>
               </li>
               <li className="relative">
-                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--sun)] text-[var(--ink)] font-serif font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">4</div>
+                <div className="w-[56px] h-[56px] rounded-full grid place-items-center bg-[var(--primary)] text-white font-sans font-black text-[1.35rem] shadow-[0_0_0_8px_var(--band)] relative z-10">4</div>
                 <h3 className="mt-5 font-serif text-[1.3rem] font-bold">Deliver and close</h3>
                 <p className="mt-2 text-[var(--muted)]">The crop moves, the deal is closed, and both sides keep a record of it.</p>
               </li>
@@ -135,7 +134,7 @@ export default function Home() {
           <div className="max-w-[1180px] w-[calc(100%-2.5rem)] mx-auto animate-fade-in-up">
             <h2 className="font-serif font-bold text-[clamp(2rem,4vw,3.1rem)] leading-[1.1] tracking-[-0.015em] max-w-[22ch]">Made for both sides of the deal</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-              <article className="rounded-[32px] p-8 md:p-10 bg-gradient-to-br from-[var(--sun-2)] to-[var(--sun)] text-[var(--ink)]">
+              <article className="rounded-[32px] p-8 md:p-10 bg-[var(--bg-card-alt)] border border-[var(--border)] text-[var(--text-primary)]">
                 <h3 className="font-serif text-[1.9rem] font-black leading-[1.1]">For farmers</h3>
                 <p className="mt-3 max-w-[30rem] text-[#3d3208]">Put your crop in front of buyers and decide who gets it.</p>
                 <ul className="my-6 grid gap-2 list-none">
@@ -143,11 +142,11 @@ export default function Home() {
                   <li className="flex gap-3 items-start font-medium before:content-[''] before:flex-none before:w-[11px] before:h-[11px] before:mt-[6px] before:rounded-full before:bg-[var(--seed)] before:shadow-[0_0_0_3px_rgba(74,44,18,0.25)]">Set the price you expect</li>
                   <li className="flex gap-3 items-start font-medium before:content-[''] before:flex-none before:w-[11px] before:h-[11px] before:mt-[6px] before:rounded-full before:bg-[var(--seed)] before:shadow-[0_0_0_3px_rgba(74,44,18,0.25)]">Choose from the offers you receive</li>
                 </ul>
-                <Link to="/register" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-sans font-semibold text-base no-underline cursor-pointer border-2 border-transparent transition-all duration-200 bg-[var(--ink)] text-[var(--cream)] hover:bg-[#1f4d36]">
+                <Link to="/register" className="btn-primary px-6 py-3 text-base no-underline">
                   List your crop
                 </Link>
               </article>
-              <article className="rounded-[14px_44px_14px_44px] p-8 md:p-10 bg-[var(--glass)] border border-[var(--line)] backdrop-blur-[16px] saturate-[140%] shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
+              <article className="ledger-card rounded-[14px_44px_14px_44px] p-8 md:p-10">
                 <h3 className="font-serif text-[1.9rem] font-black leading-[1.1]">For buyers</h3>
                 <p className="mt-3 max-w-[30rem] text-[var(--muted)]">Find crops by type and location, and deal with the grower.</p>
                 <ul className="my-6 grid gap-2 list-none">
@@ -155,7 +154,7 @@ export default function Home() {
                   <li className="flex gap-3 items-start font-medium before:content-[''] before:flex-none before:w-[11px] before:h-[11px] before:mt-[6px] before:rounded-full before:bg-[var(--sun-2)] before:shadow-[0_0_0_3px_rgba(255,216,77,0.25)]">Compare prices side by side</li>
                   <li className="flex gap-3 items-start font-medium before:content-[''] before:flex-none before:w-[11px] before:h-[11px] before:mt-[6px] before:rounded-full before:bg-[var(--sun-2)] before:shadow-[0_0_0_3px_rgba(255,216,77,0.25)]">Keep every agreement in one place</li>
                 </ul>
-                <Link to="/register" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-sans font-semibold text-base no-underline cursor-pointer border-2 border-transparent transition-all duration-200 bg-gradient-to-br from-[var(--sun-2)] to-[var(--sun)] text-[var(--ink)] shadow-[0_8px_24px_rgba(245,183,0,0.3)] hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(245,183,0,0.45)]">
+                <Link to="/register" className="btn-primary px-6 py-3 text-base no-underline">
                   Find crops
                 </Link>
               </article>
@@ -164,7 +163,7 @@ export default function Home() {
         </section>
 
         {reviews.length > 0 && (
-          <section className="relative border-t border-[var(--line)] bg-[rgba(255,255,255,0.03)] py-20" aria-labelledby="buyer-reviews-heading">
+          <section className="relative border-t border-[var(--border)] bg-[var(--bg-card-alt)] py-20" aria-labelledby="buyer-reviews-heading">
             <div className="max-w-[1180px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)] mx-auto">
               <div className="max-w-2xl">
                 <p className="text-sm font-bold tracking-[0.14em] text-[var(--sun-2)]">BUYER REVIEWS</p>
@@ -188,7 +187,7 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="bg-[#0A2115] pt-14 pb-8 border-t border-[var(--line)]">
+      <footer className="bg-[var(--primary-dark)] text-white pt-14 pb-8 border-t border-[var(--primary-dark)]">
         <div className="max-w-[1180px] w-[calc(100%-2.5rem)] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr] gap-8">
             <div>
@@ -196,18 +195,18 @@ export default function Home() {
                 <Logo className="w-[34px] h-[34px]" />
                 Krishi Setu
               </Link>
-              <p className="text-[var(--muted)] max-w-[26rem] mt-3">Farm-to-market deals with clear prices, for farmers and buyers.</p>
+              <p className="text-white/75 max-w-[26rem] mt-3">Farm-to-market deals with clear prices, for farmers and buyers.</p>
             </div>
             <div>
               <h4 className="font-serif text-[1.05rem] mb-3">Get started</h4>
               <ul className="list-none grid gap-2">
-                <li><Link to="/register" className="text-[var(--muted)] no-underline hover:text-[var(--sun-2)] transition-colors">Register as Farmer</Link></li>
-                <li><Link to="/register" className="text-[var(--muted)] no-underline hover:text-[var(--sun-2)] transition-colors">Register as Buyer</Link></li>
-                <li><Link to="/login" className="text-[var(--muted)] no-underline hover:text-[var(--sun-2)] transition-colors">Log In</Link></li>
+                <li><Link to="/register" className="text-white/75 no-underline hover:text-white transition-colors">Register as Farmer</Link></li>
+                <li><Link to="/register" className="text-white/75 no-underline hover:text-white transition-colors">Register as Buyer</Link></li>
+                <li><Link to="/login" className="text-white/75 no-underline hover:text-white transition-colors">Log In</Link></li>
               </ul>
             </div>
           </div>
-          <p className="mt-10 pt-5 border-t border-[var(--line)] text-sm text-[var(--muted)]">
+          <p className="mt-10 pt-5 border-t border-white/20 text-sm text-white/70">
             © {new Date().getFullYear()} Krishi Setu. All rights reserved.
           </p>
         </div>

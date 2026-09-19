@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
@@ -58,11 +59,26 @@ function ProtectedRoute({ children, role }) {
   return children;
 }
 
+function RoleTheme() {
+  const { userData } = useAuth();
+  const location = useLocation();
+
+  useEffect(() => {
+    const routeRole = location.pathname.startsWith('/buyer') ? 'buyer' : 'farmer';
+    const role = location.pathname === '/' ? 'farmer' : userData?.role === 'buyer' ? 'buyer' : userData?.role === 'farmer' ? 'farmer' : routeRole;
+    document.documentElement.dataset.role = role;
+    localStorage.setItem('krishi-setu-theme-role', role);
+  }, [location.pathname, userData?.role]);
+
+  return null;
+}
+
 function App() {
   return (
     <AuthProvider>
       <ConfirmProvider>
         <BrowserRouter>
+          <RoleTheme />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />

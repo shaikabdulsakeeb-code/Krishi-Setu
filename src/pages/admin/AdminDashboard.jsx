@@ -102,12 +102,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-1)] text-[var(--cream)] font-sans">
-      <nav className="bg-[rgba(15,46,31,0.78)] backdrop-blur-md border-b border-[var(--line)] sticky top-0 z-20 shadow-sm">
+      <nav className="bg-[color-mix(in_srgb,var(--bg-card)_92%,transparent)] backdrop-blur-md border-b border-[var(--line)] sticky top-0 z-20 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-3">
               <Logo className="w-8 h-8" />
-              <span className="text-xl font-bold font-serif text-[var(--sun-2)]">Admin Dashboard</span>
+              <span className="text-xl font-bold font-serif text-[var(--primary)]">Admin Dashboard</span>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-[var(--muted)] hidden sm:block">{userData?.email}</span>
@@ -133,19 +133,19 @@ export default function AdminDashboard() {
             <div className="flex bg-[var(--glass)] p-1 rounded-full border border-[var(--line)]">
             <button
               onClick={() => setFilter('pending')}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'pending' ? 'bg-[var(--sun-2)] text-[var(--ink)]' : 'text-[var(--muted)] hover:text-[var(--cream)]'}`}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'pending' ? 'bg-[var(--primary)] text-white' : 'text-[var(--muted)] hover:text-[var(--cream)]'}`}
             >
               Pending
             </button>
             <button
               onClick={() => setFilter('approved')}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'approved' ? 'bg-[var(--sun-2)] text-[var(--ink)]' : 'text-[var(--muted)] hover:text-[var(--cream)]'}`}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'approved' ? 'bg-[var(--primary)] text-white' : 'text-[var(--muted)] hover:text-[var(--cream)]'}`}
             >
               Approved
             </button>
             <button
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'all' ? 'bg-[var(--sun-2)] text-[var(--ink)]' : 'text-[var(--muted)] hover:text-[var(--cream)]'}`}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'all' ? 'bg-[var(--primary)] text-white' : 'text-[var(--muted)] hover:text-[var(--cream)]'}`}
             >
               All Users
             </button>
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
                   key={value}
                   type="button"
                   onClick={() => setRoleFilter(value)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${roleFilter === value ? 'border-[var(--sun-2)] bg-[var(--sun-2)] text-[var(--ink)]' : 'border-[var(--line)] text-[var(--muted)] hover:text-[var(--cream)]'}`}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${roleFilter === value ? 'border-[var(--primary)] bg-[var(--primary)] text-white' : 'border-[var(--line)] text-[var(--muted)] hover:text-[var(--cream)]'}`}
                 >
                   {label}
                 </button>
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
         <div className="bg-[var(--glass)] border border-[var(--line)] backdrop-blur-md rounded-[20px] overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-[var(--line)]">
-              <thead className="bg-[rgba(15,46,31,0.5)]">
+              <thead className="bg-[var(--bg-card-alt)]">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-bold text-[var(--muted)] uppercase tracking-wider">User</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-[var(--muted)] uppercase tracking-wider">Role</th>
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
                   filteredUsers.map((user) => (
                     <tr 
                       key={user.id} 
-                      className="hover:bg-[rgba(255,246,214,0.03)] transition-colors cursor-pointer"
+                      className="hover:bg-[var(--bg-card-alt)] transition-colors cursor-pointer"
                       onClick={() => setSelectedUser(user)}
                       title="View user details"
                     >
@@ -212,17 +212,17 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'farmer' ? 'bg-[#3a674f] text-[#a0d2b3]' : 'bg-[#724d00] text-[#febe51]'}`}>
+                        <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'farmer' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
                           {user.role}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {(user.status || 'pending') === 'approved' ? (
-                          <span className="flex items-center text-sm text-green-400">
+                          <span className="flex items-center text-sm text-[var(--success-dark)]">
                             <CheckCircle className="w-4 h-4 mr-1.5" /> Approved
                           </span>
                         ) : (
-                          <span className="flex items-center text-sm text-amber-400">
+                          <span className="flex items-center text-sm text-[var(--sun-2)]">
                             <ShieldCheck className="w-4 h-4 mr-1.5" /> Pending
                           </span>
                         )}
@@ -234,14 +234,14 @@ export default function AdminDashboard() {
                         {(user.status || 'pending') !== 'approved' && (
                           <button
                             onClick={(e) => { e.stopPropagation(); openApproveModal(user); }}
-                            className="text-green-400 hover:text-green-300 mr-4 font-semibold transition-colors"
+                            className="text-[var(--success-dark)] hover:opacity-80 mr-4 font-semibold transition-colors"
                           >
                             Review & Approve
                           </button>
                         )}
                         <button
                           onClick={(e) => { e.stopPropagation(); setDeletingUser(user); }}
-                          className="text-[#ff967e] hover:text-red-400 font-semibold transition-colors flex items-center justify-end w-full sm:w-auto sm:inline-flex"
+                          className="text-[var(--danger)] hover:opacity-80 font-semibold transition-colors flex items-center justify-end w-full sm:w-auto sm:inline-flex"
                         >
                           <UserX className="w-4 h-4 mr-1" /> Delete
                         </button>
@@ -280,24 +280,24 @@ export default function AdminDashboard() {
                   ['Joined', selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : 'Not available'],
                   ['Location', selectedUser.location?.address || 'Not provided'],
                 ].map(([label, value]) => (
-                  <div key={label} className={`rounded-xl border border-[var(--line)] bg-white/5 p-3 ${label === 'Location' ? 'sm:col-span-2' : ''}`}>
+                  <div key={label} className={`rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] p-3 ${label === 'Location' ? 'sm:col-span-2' : ''}`}>
                     <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">{label}</dt>
                     <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)] capitalize">{value}</dd>
                   </div>
                 ))}
                 {selectedUser.role === 'farmer' && (
-                  <div className="rounded-xl border border-[var(--line)] bg-white/5 p-3 sm:col-span-2">
+                  <div className="rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] p-3 sm:col-span-2">
                     <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Government Farmer ID</dt>
                     <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)]">{selectedUser.governmentFarmerId || selectedUser.farmerId || 'Not provided'}</dd>
                   </div>
                 )}
                 {selectedUser.role === 'buyer' && (
                   <>
-                    <div className="rounded-xl border border-[var(--line)] bg-white/5 p-3">
+                    <div className="rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] p-3">
                       <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Trader ID</dt>
                       <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)]">{selectedUser.traderId || 'Not provided'}</dd>
                     </div>
-                    <div className="rounded-xl border border-[var(--line)] bg-white/5 p-3">
+                    <div className="rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] p-3">
                       <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Business License</dt>
                       <dd className="mt-1 break-words text-sm font-medium text-[var(--cream)]">{selectedUser.businessLicenseNumber || selectedUser.businessLicense || 'Not provided'}</dd>
                     </div>
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="flex flex-col-reverse gap-3 border-t border-[var(--line)] bg-[var(--bg-1)] p-5 sm:flex-row sm:justify-end sm:p-6">
-              <button type="button" onClick={() => setSelectedUser(null)} className="rounded-full px-5 py-2.5 text-sm font-semibold text-[var(--cream)] transition hover:bg-white/5">Close</button>
+              <button type="button" onClick={() => setSelectedUser(null)} className="rounded-full px-5 py-2.5 text-sm font-semibold text-[var(--cream)] transition hover:bg-[var(--bg-card-alt)]">Close</button>
               {(selectedUser.status || 'pending') !== 'approved' && (
                 <button type="button" onClick={() => { setSelectedUser(null); openApproveModal(selectedUser); }} className="btn-success rounded-full px-5 py-2.5 text-sm">Review & Approve</button>
               )}
@@ -329,7 +329,7 @@ export default function AdminDashboard() {
             <div className="p-6 overflow-y-auto space-y-5">
               <p className="text-sm text-[var(--muted)] mb-2">Please verify the following details before approving this user.</p>
               
-              <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+              <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] cursor-pointer hover:bg-[var(--bg-primary)] transition-colors">
                 <input type="checkbox" checked={verifyName} onChange={(e) => setVerifyName(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
                 <div>
                   <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Name</div>
@@ -337,7 +337,7 @@ export default function AdminDashboard() {
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+              <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] cursor-pointer hover:bg-[var(--bg-primary)] transition-colors">
                 <input type="checkbox" checked={verifyEmail} onChange={(e) => setVerifyEmail(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
                 <div>
                   <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Email</div>
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
               </label>
 
               {approvingUser.role === 'farmer' && (
-                <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] cursor-pointer hover:bg-[var(--bg-primary)] transition-colors">
                   <input type="checkbox" checked={verifyId1} onChange={(e) => setVerifyId1(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
                   <div>
                     <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Farmer ID</div>
@@ -357,14 +357,14 @@ export default function AdminDashboard() {
 
               {approvingUser.role === 'buyer' && (
                 <>
-                  <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                  <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] cursor-pointer hover:bg-[var(--bg-primary)] transition-colors">
                     <input type="checkbox" checked={verifyId1} onChange={(e) => setVerifyId1(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
                     <div>
                       <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Trader ID</div>
                       <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.traderId || 'Not provided'}</div>
                     </div>
                   </label>
-                  <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                  <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[var(--bg-card-alt)] cursor-pointer hover:bg-[var(--bg-primary)] transition-colors">
                     <input type="checkbox" checked={verifyId2} onChange={(e) => setVerifyId2(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
                     <div>
                       <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Business License</div>
@@ -377,7 +377,7 @@ export default function AdminDashboard() {
             <div className="p-6 border-t border-[var(--line)] flex justify-end gap-3 bg-[var(--bg-1)]">
               <button 
                 onClick={() => setApprovingUser(null)} 
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[var(--cream)] hover:bg-[rgba(255,255,255,0.05)] transition"
+                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[var(--cream)] hover:bg-[var(--bg-card-alt)] transition"
               >
                 Cancel
               </button>
@@ -415,7 +415,7 @@ export default function AdminDashboard() {
               </button>
               <button 
                 onClick={() => setDeletingUser(null)} 
-                className="w-full py-3 rounded-xl text-sm font-semibold text-[var(--cream)] border border-[var(--line)] hover:bg-[rgba(255,255,255,0.05)] transition"
+                className="w-full py-3 rounded-xl text-sm font-semibold text-[var(--cream)] border border-[var(--line)] hover:bg-[var(--bg-card-alt)] transition"
               >
                 Cancel
               </button>
