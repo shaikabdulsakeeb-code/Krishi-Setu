@@ -21,16 +21,16 @@ export default function BuyerLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-[#1e1b14]">
+    <div className="min-h-screen flex flex-col font-sans text-[var(--cream)]">
       {/* Top Nav */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-20 rounded-b-2xl shadow-sm">
+      <nav className="bg-[rgba(15,46,31,0.78)] backdrop-blur-md border-b border-[var(--line)] sticky top-0 z-20 rounded-b-2xl shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               {/* Mobile menu button */}
               <button
                 type="button"
-                className="sm:hidden -ml-2 mr-2 p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none"
+                className="sm:hidden -ml-2 mr-2 p-2 rounded-md text-[var(--muted)] hover:text-[var(--cream)] hover:bg-[var(--glass)] focus:outline-none"
                 onClick={() => setMobileMenuOpen(true)}
               >
                 <Menu className="h-6 w-6" />
@@ -38,7 +38,7 @@ export default function BuyerLayout() {
               
               <div className="flex-shrink-0 flex items-center">
                 <Logo className="w-8 h-8" />
-                <span className="ml-2 text-xl font-bold font-serif text-[var(--bg-2)]">Krishi Setu</span>
+                <span className="ml-2 text-xl font-bold font-serif text-[var(--sun-2)]">Krishi Setu</span>
               </div>
               <div className="hidden sm:-my-px sm:ml-8 sm:flex sm:space-x-8">
                 {navItems.map((item) => {
@@ -50,8 +50,8 @@ export default function BuyerLayout() {
                       to={item.path}
                       className={`${
                         isActive
-                          ? 'border-[#3a674f] text-gray-900'
-                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                          ? 'border-[var(--sun-2)] text-[var(--sun-2)]'
+                          : 'border-transparent text-[var(--muted)] hover:border-[var(--line)] hover:text-[var(--cream)]'
                       } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors`}
                     >
                       <Icon className="w-4 h-4 mr-2" />
@@ -67,7 +67,7 @@ export default function BuyerLayout() {
               <TeluguWordHelper />
               <button
                 onClick={logout}
-                className="inline-flex items-center border border-transparent text-sm font-medium focus:outline-none btn-destructive"
+                className="inline-flex items-center px-3 py-1.5 border border-[var(--line)] rounded-full text-sm font-medium text-[var(--clay)] hover:bg-[var(--line)] transition-colors"
               >
                 <LogOut className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Sign out</span>
@@ -80,13 +80,13 @@ export default function BuyerLayout() {
       {/* Mobile Sidebar (Drawer) */}
       {mobileMenuOpen && (
         <div className="relative z-40 sm:hidden">
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setMobileMenuOpen(false)}></div>
-          <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white shadow-xl">
-            <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200">
-              <span className="text-xl font-bold font-serif text-[#033621]">Krishi Setu</span>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}></div>
+          <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-[var(--bg-2)] shadow-xl">
+            <div className="flex items-center justify-between px-4 h-16 border-b border-[var(--line)]">
+              <span className="text-xl font-bold font-serif text-[var(--sun-2)]">Krishi Setu</span>
               <button
                 type="button"
-                className="p-2 text-gray-400 hover:text-gray-500 focus:outline-none"
+                className="p-2 text-[var(--muted)] hover:text-[var(--cream)] focus:outline-none"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <X className="h-6 w-6" />
@@ -102,10 +102,10 @@ export default function BuyerLayout() {
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`${
-                      isActive ? 'bg-[#f5ede1] text-[#033621] font-bold' : 'text-gray-700 hover:bg-gray-50'
+                      isActive ? 'bg-[var(--glass)] text-[var(--sun-2)] font-bold' : 'text-[var(--cream)] hover:bg-[var(--glass)]'
                     } group flex items-center px-2 py-3 text-base font-medium rounded-md`}
                   >
-                    <Icon className={`${isActive ? 'text-[#3a674f]' : 'text-gray-400 group-hover:text-gray-500'} mr-4 h-6 w-6`} />
+                    <Icon className={`${isActive ? 'text-[var(--sun-2)]' : 'text-[var(--muted)] group-hover:text-[var(--cream)]'} mr-4 h-6 w-6`} />
                     {item.name}
                   </Link>
                 );
