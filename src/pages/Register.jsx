@@ -8,6 +8,9 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [role, setRole] = useState('farmer'); // 'farmer' or 'buyer'
+  const [farmerId, setFarmerId] = useState('');
+  const [traderId, setTraderId] = useState('');
+  const [businessLicense, setBusinessLicense] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -25,7 +28,8 @@ export default function Register() {
     try {
       setError('');
       setLoading(true);
-      await register(email, password, role);
+      const extraFields = role === 'farmer' ? { farmerId } : { traderId, businessLicense };
+      await register(email, password, role, extraFields);
       if (role === 'farmer') navigate('/farmer/dashboard');
       else navigate('/buyer/dashboard');
     } catch (err) {
@@ -39,7 +43,8 @@ export default function Register() {
     try {
       setError('');
       setLoading(true);
-      const { profile } = await loginWithGoogle(role);
+      const extraFields = role === 'farmer' ? { farmerId } : { traderId, businessLicense };
+      const { profile } = await loginWithGoogle(role, extraFields);
       if (profile.role === 'admin') navigate('/admin/dashboard');
       else if (profile.role === 'farmer') navigate('/farmer/dashboard');
       else navigate('/buyer/dashboard');
@@ -122,6 +127,47 @@ export default function Register() {
                 onChange={(e) => setPasswordConfirm(e.target.value)}
               />
             </div>
+
+            {role === 'farmer' && (
+              <div>
+                <label className="block text-sm font-medium text-[var(--cream)] mb-1">Farmer ID</label>
+                <input
+                  type="text"
+                  required
+                  className="form-input px-3 py-2 w-full relative block focus:z-10"
+                  placeholder="Farmer ID"
+                  value={farmerId}
+                  onChange={(e) => setFarmerId(e.target.value)}
+                />
+              </div>
+            )}
+
+            {role === 'buyer' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--cream)] mb-1">Trader ID</label>
+                  <input
+                    type="text"
+                    required
+                    className="form-input px-3 py-2 w-full relative block focus:z-10"
+                    placeholder="Trader ID"
+                    value={traderId}
+                    onChange={(e) => setTraderId(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--cream)] mb-1">Business License Number</label>
+                  <input
+                    type="text"
+                    required
+                    className="form-input px-3 py-2 w-full relative block focus:z-10"
+                    placeholder="Business License"
+                    value={businessLicense}
+                    onChange={(e) => setBusinessLicense(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           <div>

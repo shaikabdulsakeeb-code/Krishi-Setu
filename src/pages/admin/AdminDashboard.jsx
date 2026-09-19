@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
 import { ref, get, update, remove } from 'firebase/database';
-import { ShieldCheck, UserX, CheckCircle, Search, LogOut } from 'lucide-react';
+import { ShieldCheck, UserX, CheckCircle, LogOut, X, AlertTriangle } from 'lucide-react';
 import Logo from '../../components/Logo';
 
 export default function AdminDashboard() {
@@ -10,6 +10,15 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending'); // pending, approved, all
+
+  const [approvingUser, setApprovingUser] = useState(null);
+  const [deletingUser, setDeletingUser] = useState(null);
+
+  // Checkbox states for approval modal
+  const [verifyName, setVerifyName] = useState(false);
+  const [verifyEmail, setVerifyEmail] = useState(false);
+  const [verifyId1, setVerifyId1] = useState(false);
+  const [verifyId2, setVerifyId2] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -36,32 +45,57 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleApprove = async (userId) => {
+  const handleApprove = async () => {
+    if (!approvingUser) return;
     try {
-      const userRef = ref(db, `users/${userId}`);
+      const userRef = ref(db, `users/${approvingUser.id}`);
       await update(userRef, { status: 'approved' });
-      setUsers(users.map(u => u.id === userId ? { ...u, status: 'approved' } : u));
+      setUsers(users.map(u => u.id === approvingUser.id ? { ...u, status: 'approved' } : u));
+      setApprovingUser(null);
+      resetCheckboxes();
     } catch (err) {
       alert("Error approving user: " + err.message);
     }
   };
 
-  const handleDelete = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user? This will remove their data from the database and block their access.")) return;
+  const handleDelete = async () => {
+    if (!deletingUser) return;
     try {
-      const userRef = ref(db, `users/${userId}`);
-      await remove(userRef); // Remove the user node
-      setUsers(users.filter(u => u.id !== userId));
+      const userRef = ref(db, `users/${deletingUser.id}`);
+      await remove(userRef);
+      setUsers(users.filter(u => u.id !== deletingUser.id));
+      setDeletingUser(null);
     } catch (err) {
       alert("Error deleting user: " + err.message);
     }
   };
 
+  const resetCheckboxes = () => {
+    setVerifyName(false);
+    setVerifyEmail(false);
+    setVerifyId1(false);
+    setVerifyId2(false);
+  };
+
+  const openApproveModal = (user) => {
+    setApprovingUser(user);
+    resetCheckboxes();
+  };
+
   const filteredUsers = users.filter(u => {
-    if (u.role === 'admin') return false; // Hide admin users
+    if (u.role === 'admin') return false;
+    const userStatus = u.status || 'pending';
     if (filter === 'all') return true;
-    return u.status === filter;
+    return userStatus === filter;
   });
+
+  const canApprove = () => {
+    if (!approvingUser) return false;
+    if (!verifyName || !verifyEmail) return false;
+    if (approvingUser.role === 'farmer' && !verifyId1) return false;
+    if (approvingUser.role === 'buyer' && (!verifyId1 || !verifyId2)) return false;
+    return true;
+  };
 
   return (
     <div className="min-h-screen bg-[var(--bg-1)] text-[var(--cream)] font-sans">
@@ -139,7 +173,11 @@ export default function AdminDashboard() {
                   </tr>
                 ) : (
                   filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-[rgba(255,246,214,0.03)] transition-colors">
+                    <tr 
+                      key={user.id} 
+                      className="hover:bg-[rgba(255,246,214,0.03)] transition-colors cursor-pointer"
+                      onClick={() => (user.status || 'pending') === 'pending' && openApproveModal(user)}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0 bg-[var(--sun)] rounded-full flex items-center justify-center text-[var(--ink)] font-bold">
@@ -157,7 +195,7 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {user.status === 'approved' ? (
+                        {(user.status || 'pending') === 'approved' ? (
                           <span className="flex items-center text-sm text-green-400">
                             <CheckCircle className="w-4 h-4 mr-1.5" /> Approved
                           </span>
@@ -171,16 +209,16 @@ export default function AdminDashboard() {
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {user.status !== 'approved' && (
+                        {(user.status || 'pending') !== 'approved' && (
                           <button
-                            onClick={() => handleApprove(user.id)}
+                            onClick={(e) => { e.stopPropagation(); openApproveModal(user); }}
                             className="text-green-400 hover:text-green-300 mr-4 font-semibold transition-colors"
                           >
-                            Approve
+                            Review & Approve
                           </button>
                         )}
                         <button
-                          onClick={() => handleDelete(user.id)}
+                          onClick={(e) => { e.stopPropagation(); setDeletingUser(user); }}
                           className="text-[#ff967e] hover:text-red-400 font-semibold transition-colors flex items-center justify-end w-full sm:w-auto sm:inline-flex"
                         >
                           <UserX className="w-4 h-4 mr-1" /> Delete
@@ -194,6 +232,114 @@ export default function AdminDashboard() {
           </div>
         </div>
       </main>
+
+      {/* Approval Modal */}
+      {approvingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in-up">
+          <div className="bg-[var(--bg-2)] border border-[var(--line)] rounded-[20px] w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-6 border-b border-[var(--line)]">
+              <h2 className="text-xl font-serif font-bold text-[var(--cream)]">Review & Approve User</h2>
+              <button onClick={() => setApprovingUser(null)} className="text-[var(--muted)] hover:text-[var(--cream)] transition">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto space-y-5">
+              <p className="text-sm text-[var(--muted)] mb-2">Please verify the following details before approving this user.</p>
+              
+              <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                <input type="checkbox" checked={verifyName} onChange={(e) => setVerifyName(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
+                <div>
+                  <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Name</div>
+                  <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.name}</div>
+                </div>
+              </label>
+
+              <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                <input type="checkbox" checked={verifyEmail} onChange={(e) => setVerifyEmail(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
+                <div>
+                  <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Email</div>
+                  <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.email}</div>
+                </div>
+              </label>
+
+              {approvingUser.role === 'farmer' && (
+                <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                  <input type="checkbox" checked={verifyId1} onChange={(e) => setVerifyId1(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
+                  <div>
+                    <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Farmer ID</div>
+                    <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.farmerId || 'Not provided'}</div>
+                  </div>
+                </label>
+              )}
+
+              {approvingUser.role === 'buyer' && (
+                <>
+                  <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                    <input type="checkbox" checked={verifyId1} onChange={(e) => setVerifyId1(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
+                    <div>
+                      <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Trader ID</div>
+                      <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.traderId || 'Not provided'}</div>
+                    </div>
+                  </label>
+                  <label className="flex items-start gap-3 p-3 rounded-xl border border-[var(--line)] bg-[rgba(255,246,214,0.02)] cursor-pointer hover:bg-[rgba(255,246,214,0.05)] transition-colors">
+                    <input type="checkbox" checked={verifyId2} onChange={(e) => setVerifyId2(e.target.checked)} className="mt-1 w-4 h-4 text-[var(--sun-2)] bg-transparent border-[var(--line)] rounded focus:ring-[var(--sun-2)] focus:ring-2" />
+                    <div>
+                      <div className="text-xs text-[var(--muted)] uppercase font-bold tracking-wider mb-1">Business License</div>
+                      <div className="text-sm text-[var(--cream)] font-medium">{approvingUser.businessLicense || 'Not provided'}</div>
+                    </div>
+                  </label>
+                </>
+              )}
+            </div>
+            <div className="p-6 border-t border-[var(--line)] flex justify-end gap-3 bg-[var(--bg-1)]">
+              <button 
+                onClick={() => setApprovingUser(null)} 
+                className="px-5 py-2.5 rounded-full text-sm font-semibold text-[var(--cream)] hover:bg-[rgba(255,255,255,0.05)] transition"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleApprove}
+                disabled={!canApprove()}
+                className="btn-success disabled:opacity-50 disabled:cursor-not-allowed rounded-full px-6 py-2.5"
+              >
+                Approve User
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in-up">
+          <div className="bg-[var(--bg-2)] border border-red-500/30 rounded-[20px] w-full max-w-sm shadow-2xl overflow-hidden flex flex-col">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-8 h-8" />
+              </div>
+              <h2 className="text-xl font-bold text-[var(--cream)] mb-2">Delete User?</h2>
+              <p className="text-sm text-[var(--muted)]">
+                Are you sure you want to delete <span className="font-semibold text-white">{deletingUser.name}</span>? This action cannot be undone and will permanently remove their access and data.
+              </p>
+            </div>
+            <div className="p-6 pt-0 flex flex-col gap-3">
+              <button 
+                onClick={handleDelete}
+                className="btn-danger w-full py-3 rounded-xl text-base"
+              >
+                Yes, Delete User
+              </button>
+              <button 
+                onClick={() => setDeletingUser(null)} 
+                className="w-full py-3 rounded-xl text-sm font-semibold text-[var(--cream)] border border-[var(--line)] hover:bg-[rgba(255,255,255,0.05)] transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  function buildStarterProfile(user, role) {
+  function buildStarterProfile(user, role, extraFields = {}) {
     const isAdmin = user.email === 'keebo.platform@gmail.com';
     return {
       email: user.email,
@@ -47,14 +47,15 @@ export function AuthProvider({ children }) {
       status: isAdmin ? 'approved' : 'pending',
       createdAt: new Date().toISOString(),
       profileCompleted: false,
+      ...extraFields
     };
   }
 
-  async function register(email, password, role) {
+  async function register(email, password, role, extraFields = {}) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    const profile = buildStarterProfile(user, role);
+    const profile = buildStarterProfile(user, role, extraFields);
     const userDocRef = ref(db, `users/${user.uid}`);
     await set(userDocRef, profile);
     saveCachedProfile(user, profile);
@@ -77,13 +78,13 @@ export function AuthProvider({ children }) {
     return { user, profile };
   }
 
-  async function loginWithGoogle(role = 'buyer') {
+  async function loginWithGoogle(role = 'buyer', extraFields = {}) {
     const userCredential = await signInWithPopup(auth, googleProvider);
     const user = userCredential.user;
     const userDocRef = ref(db, `users/${user.uid}`);
     const userDoc = await get(userDocRef);
 
-    const profile = userDoc.exists() ? userDoc.val() : buildStarterProfile(user, role);
+    const profile = userDoc.exists() ? userDoc.val() : buildStarterProfile(user, role, extraFields);
     if (!userDoc.exists()) await set(userDocRef, profile);
     saveCachedProfile(user, profile);
     setUserData(profile);
