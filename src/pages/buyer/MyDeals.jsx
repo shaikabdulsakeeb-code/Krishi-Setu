@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { db } from '../../firebase';
-import { get, onValue, ref, update, push, set, remove } from 'firebase/database';
+import { get, onValue, ref, update, remove } from 'firebase/database';
 import { snapshotToList } from '../../utils/database';
 import { useConfirm } from '../../contexts/ConfirmContext';
 import ReviewModal from '../../components/ReviewModal';
@@ -61,26 +61,40 @@ export default function MyDeals() {
   async function handleReviewSubmit({ rating, review }) {
     if (!reviewingDeal) return;
     try {
-      // Create review
-      const reviewRef = push(ref(db, 'reviews'));
-      await set(reviewRef, {
+      const reviewId = `${reviewingDeal.id}_${currentUser.uid}`;
+      const completedAt = new Date().toISOString();
+      await update(ref(db), {
+        [`reviews/${reviewId}`]: {
         dealId: reviewingDeal.id,
         farmerId: reviewingDeal.farmerId,
         buyerId: currentUser.uid,
         rating,
         reviewText: review.trim(),
-        createdAt: new Date().toISOString()
+          cropName: reviewingDeal.cropName || 'Crop deal',
+          createdAt: completedAt
+        },
+        [`deals/${reviewingDeal.id}/status`]: 'COMPLETED',
+        [`deals/${reviewingDeal.id}/reviewedAt`]: completedAt,
+        [`deals/${reviewingDeal.id}/updatedAt`]: completedAt
       });
-
-      // Mark deal as completed
-      await update(ref(db, `deals/${reviewingDeal.id}`), {
-        status: 'COMPLETED',
-        updatedAt: new Date().toISOString()
-      });
-      
       setReviewingDeal(null);
     } catch (err) {
       alert('Failed to submit review: ' + err.message);
+    }
+  }
+
+  async function confirmDelivery(deal) {
+    if (!(await confirm('Confirm that the crop delivery is complete? You can rate your experience next.'))) return;
+    try {
+      const deliveredAt = new Date().toISOString();
+      await update(ref(db, `deals/${deal.id}`), {
+        status: 'DELIVERED',
+        deliveredAt,
+        updatedAt: deliveredAt
+      });
+      setReviewingDeal(deal);
+    } catch (err) {
+      alert('Failed to confirm delivery: ' + err.message);
     }
   }
 
@@ -100,6 +114,7 @@ export default function MyDeals() {
             const isPendingMe = deal.status === 'PENDING_BUYER';
             const isPendingOther = deal.status === 'PENDING_FARMER';
             const isConfirmed = deal.status === 'CONFIRMED';
+            const isDelivered = deal.status === 'DELIVERED';
             const isCompleted = deal.status === 'COMPLETED';
             const isDeclinedOrCancelled = deal.status === 'DECLINED' || deal.status === 'CANCELLED';
             
@@ -119,6 +134,7 @@ export default function MyDeals() {
                     ${isPendingMe ? 'bg-yellow-100 text-yellow-800' : ''}
                     ${isPendingOther ? 'bg-blue-100 text-blue-800' : ''}
                     ${isConfirmed ? 'bg-green-100 text-green-800' : ''}
+                    ${isDelivered ? 'bg-blue-100 text-blue-800' : ''}
                     ${isCompleted ? 'bg-gray-100 text-gray-800' : ''}
                     ${isDeclinedOrCancelled ? 'bg-red-100 text-red-800' : ''}
                   `}>
@@ -186,10 +202,21 @@ export default function MyDeals() {
                       </a>
                     </div>
                     <button
-                      onClick={() => setReviewingDeal(deal)}
+                      onClick={() => confirmDelivery(deal)}
                       className="w-full btn-success py-2 mt-2"
                     >
-                      Mark as Completed (Delivered)
+                      Confirm Delivery Received
+                    </button>
+                  </div>
+                )}
+
+                {isDelivered && (
+                  <div className="mt-auto space-y-3 pt-4 border-t border-gray-100">
+                    <div className="p-3 bg-blue-50 text-blue-800 text-sm rounded-md text-center">
+                      Delivery confirmed. Please rate your experience to complete this deal.
+                    </div>
+                    <button onClick={() => setReviewingDeal(deal)} className="w-full btn-primary py-2">
+                      Rate Your Experience
                     </button>
                   </div>
                 )}

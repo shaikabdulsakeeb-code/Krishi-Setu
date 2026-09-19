@@ -20,6 +20,12 @@
       "$dealId": {
         ".write": "auth != null && ((!data.exists() && (newData.child('buyerId').val() === auth.uid || newData.child('farmerId').val() === auth.uid)) || (data.exists() && newData.exists() && (data.child('buyerId').val() === auth.uid || data.child('farmerId').val() === auth.uid)))"
       }
+    },
+    "reviews": {
+      ".read": true,
+      "$reviewId": {
+        ".write": "auth != null && !data.exists() && newData.child('buyerId').val() === auth.uid && root.child('deals').child(newData.child('dealId').val()).child('buyerId').val() === auth.uid && root.child('deals').child(newData.child('dealId').val()).child('farmerId').val() === newData.child('farmerId').val()"
+      }
     }
   }
 }

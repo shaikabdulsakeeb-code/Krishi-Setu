@@ -1,10 +1,26 @@
+import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { ShieldCheck, Tractor, ArrowRight } from 'lucide-react';
+import { Star } from 'lucide-react';
 import Logo from '../components/Logo';
 import { useAuth } from '../hooks/useAuth';
+import { db } from '../firebase';
+import { onValue, ref } from 'firebase/database';
+import { snapshotToList } from '../utils/database';
 
 export default function Home() {
   const { currentUser, userData, loading } = useAuth();
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = onValue(ref(db, 'reviews'), (snapshot) => {
+      const latestReviews = snapshotToList(snapshot)
+        .filter((review) => Number(review.rating) >= 1 && Number(review.rating) <= 5)
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+        .slice(0, 3);
+      setReviews(latestReviews);
+    }, () => setReviews([]));
+    return () => unsubscribe();
+  }, []);
 
   if (!loading && currentUser && userData?.role) {
     if (userData.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
@@ -146,6 +162,30 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {reviews.length > 0 && (
+          <section className="relative border-t border-[var(--line)] bg-[rgba(255,255,255,0.03)] py-20" aria-labelledby="buyer-reviews-heading">
+            <div className="max-w-[1180px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)] mx-auto">
+              <div className="max-w-2xl">
+                <p className="text-sm font-bold tracking-[0.14em] text-[var(--sun-2)]">BUYER REVIEWS</p>
+                <h2 id="buyer-reviews-heading" className="mt-3 font-serif text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.1]">Trusted by the people who trade here</h2>
+                <p className="mt-3 text-[var(--muted)]">Ratings are shared only after a buyer confirms delivery.</p>
+              </div>
+              <div className="mt-10 grid gap-5 md:grid-cols-3">
+                {reviews.map((review) => (
+                  <article key={review.id} className="ledger-card flex min-h-52 flex-col p-6">
+                    <div className="flex gap-1 text-[var(--sun-2)]" aria-label={`${review.rating} out of 5 stars`}>
+                      {[1, 2, 3, 4, 5].map((star) => <Star key={star} className={`h-4 w-4 ${star <= Number(review.rating) ? 'fill-current' : 'opacity-25'}`} />)}
+                    </div>
+                    <p className="mt-5 flex-1 text-[var(--cream)]">{review.reviewText ? `“${review.reviewText}”` : 'A buyer confirmed a successful delivery.'}</p>
+                    <p className="mt-5 text-sm font-semibold text-[var(--sun-2)] capitalize">{review.cropName || 'Crop deal'}</p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">Verified buyer review</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
       </main>
 
       <footer className="bg-[#0A2115] pt-14 pb-8 border-t border-[var(--line)]">
