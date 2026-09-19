@@ -170,14 +170,14 @@
    farmer palette; authenticated views update data-role from AuthContext. */
 :root,
 :root[data-role="farmer"] {
-  --bg-primary: #F4F8EF;
-  --bg-card: #FFFFFF;
-  --bg-card-alt: #EAF2E1;
-  --primary: #2F6B3C;
-  --primary-dark: #1D4527;
-  --text-primary: #1A1F1A;
-  --text-secondary: #55664F;
-  --border: #DCE8D2;
+  --bg-primary: #E2F0D6;
+  --bg-card: #F1F8EA;
+  --bg-card-alt: #CBE3B9;
+  --primary: #285F38;
+  --primary-dark: #173D25;
+  --text-primary: #17251A;
+  --text-secondary: #405C45;
+  --border: #B7D4A5;
   --success: #1E8E3E;
   --success-dark: #187334;
   --danger: #C0392B;
@@ -185,9 +185,9 @@
 }
 
 :root[data-role="buyer"] {
-  --bg-primary: #F5F7FA;
-  --bg-card: #FFFFFF;
-  --bg-card-alt: #E9EEF6;
+  --bg-primary: #E7EFF9;
+  --bg-card: #F0F5FC;
+  --bg-card-alt: #D3E1F3;
   --primary: #1E4C8A;
   --primary-dark: #123566;
   --text-primary: #181C22;

@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, Loader2 } from 'lucide-react';
+import { Mic, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import verifiedPrices from '../data/verifiedPrices.json';
 
-export default function VoiceAgent() {
+export default function VoiceAgent({ showLabel = false }) {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
+  const [isSupported, setIsSupported] = useState(null);
   const location = useLocation();
   const recognitionRef = useRef(null);
   
@@ -21,6 +22,7 @@ export default function VoiceAgent() {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
+      setIsSupported(true);
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = 'te-IN'; // Telugu by default
@@ -45,6 +47,7 @@ export default function VoiceAgent() {
         await processVoiceCommand(transcript);
       };
     } else {
+      setIsSupported(false);
       setError('Voice recognition is not supported in this browser.');
     }
   }, []);
@@ -100,6 +103,8 @@ export default function VoiceAgent() {
   };
 
   const toggleListen = () => {
+    if (!recognitionRef.current) return;
+
     if (isListening) {
       recognitionRef.current?.stop();
     } else {
@@ -109,34 +114,36 @@ export default function VoiceAgent() {
       }
       
       // Ensure voices are loaded
-      window.speechSynthesis.getVoices();
+      if ('speechSynthesis' in window) window.speechSynthesis.getVoices();
       recognitionRef.current?.start();
     }
   };
 
-  if (!recognitionRef.current && !error) return null;
+  if (isSupported === null) return null;
+
+  const buttonLabel = isListening ? 'Listening…' : isProcessing ? 'Working…' : 'Touch to speak';
 
   return (
     <div className="relative flex items-center">
       <button
         onClick={toggleListen}
-        disabled={isProcessing}
-        className={`p-2 rounded-full flex items-center justify-center transition-all ${
+        disabled={isProcessing || !isSupported}
+        aria-label={`Voice assistant: ${buttonLabel}`}
+        className={`flex min-h-11 items-center justify-center gap-2 rounded-full px-3 transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
           isListening 
             ? 'bg-red-100 text-red-600 animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.5)]' 
             : isProcessing
               ? 'bg-blue-100 text-blue-600'
-              : 'bg-[#e4efe7] text-[#1F4D36] hover:bg-[#c9e2d1]'
+              : 'bg-[var(--bg-card-alt)] text-[var(--primary)] hover:bg-[var(--border)]'
         }`}
         title="Voice Assistant (Telugu)"
       >
         {isProcessing ? (
           <Loader2 className="w-5 h-5 animate-spin" />
-        ) : isListening ? (
-          <Mic className="w-5 h-5" />
         ) : (
-          <MicOff className="w-5 h-5" />
+          <Mic className="w-5 h-5" />
         )}
+        {showLabel && <span className="whitespace-nowrap text-sm font-semibold">{buttonLabel}</span>}
       </button>
       
       {error && (
